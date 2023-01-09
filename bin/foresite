@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+# @todo Do these really need to be included manually?
+require_relative '../lib/foresite'
+require_relative '../lib/foresite/cli'
+Foresite::Cli.start
