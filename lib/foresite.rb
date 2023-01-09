@@ -1,4 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "foresite/version"
-require_relative "foresite/renderer"
+require "zeitwerk"
+loader = Zeitwerk::Loader.for_gem
+loader.setup
