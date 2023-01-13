@@ -23,29 +23,3 @@ jobs:
         bundler-cache: true # runs 'bundle install' and caches installed gems automatically
     - name: Run the default rake task
       run: bundle exec rake
-  job_build:
-    needs: job_test
-    steps:
-
-#      name: Publish Gem
-#
-#      on:
-#        push:
-#          branches:
-#            - "*"
-#          tags:
-#            - v*
-#      jobs:
-#        build:
-#          runs-on: ubuntu-latest
-#
-#          steps:
-#            - uses: actions/checkout@v3
-#
-#            - name: Release Gem
-#              if: contains(github.ref, 'refs/tags/v')
-#              uses: cadwallion/publish-rubygems-action@master
-#              env:
-#                GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-#                RUBYGEMS_API_KEY: ${{secrets.RUBYGEMS_API_KEY}}
-#                RELEASE_COMMAND: rake release
