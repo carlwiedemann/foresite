@@ -7,22 +7,45 @@ on:
   pull_request:
 
 jobs:
-  build:
+  job_test:
     runs-on: ubuntu-latest
-    name: Ruby ${{ matrix.ruby }}
+    name: Test (Ruby ${{ matrix.ruby }})
     strategy:
       matrix:
         ruby:
-#          - '2.7.7'
-#          - '3.1.3'
           - '3.2.0'
-
     steps:
     - uses: actions/checkout@v3
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: ${{ matrix.ruby }}
-        bundler-cache: true
+        ruby-version: ${{ matrix.ruby }} # Not needed with a .ruby-version file, but we want to build multiple versions.
+        bundler-cache: true # runs 'bundle install' and caches installed gems automatically
     - name: Run the default rake task
       run: bundle exec rake
+  job_build:
+    needs: job_test
+    steps:
+
+#      name: Publish Gem
+#
+#      on:
+#        push:
+#          branches:
+#            - "*"
+#          tags:
+#            - v*
+#      jobs:
+#        build:
+#          runs-on: ubuntu-latest
+#
+#          steps:
+#            - uses: actions/checkout@v3
+#
+#            - name: Release Gem
+#              if: contains(github.ref, 'refs/tags/v')
+#              uses: cadwallion/publish-rubygems-action@master
+#              env:
+#                GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+#                RUBYGEMS_API_KEY: ${{secrets.RUBYGEMS_API_KEY}}
+#                RELEASE_COMMAND: rake release
