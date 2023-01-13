@@ -18,15 +18,15 @@ Gem::Specification.new do |spec|
   spec.metadata["changelog_uri"] = "#{spec.homepage}/blob/main/CHANGELOG.md"
 
   spec.files = [
-    'Gemfile',
-    'LICENSE.txt',
-    'README.md',
-    'bin/foresite',
-    'lib/foresite.rb',
-    'lib/foresite/cli.rb',
-    'lib/foresite/renderer.rb',
-    'lib/foresite/version.rb',
-    'lib/skeleton/sample_template.rhtml',
+    "Gemfile",
+    "LICENSE.txt",
+    "README.md",
+    "bin/foresite",
+    "lib/foresite.rb",
+    "lib/foresite/cli.rb",
+    "lib/foresite/renderer.rb",
+    "lib/foresite/version.rb",
+    "lib/skeleton/sample_template.rhtml"
   ]
 
   spec.bindir = "bin"
