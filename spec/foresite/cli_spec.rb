@@ -34,13 +34,9 @@ RSpec.describe Foresite::Cli do
         ])
 
         expect {
-          command = :init
-          command_args = []
-          command_options = {
+          Foresite::Cli.new.invoke(:init, [], {
             d: tmpdir
-          }
-
-          Foresite::Cli.new.invoke(command, command_args, command_options)
+          })
 
           expect(Pathname.new("#{tmpdir}/md")).to be_directory
           expect(Pathname.new("#{tmpdir}/out")).to be_directory
@@ -76,7 +72,32 @@ RSpec.describe Foresite::Cli do
   end
 
   describe "touch" do
-    it "should generate a blank markdown file"
+    it "should generate a blank markdown file, with title" do
+      Dir.mktmpdir do |tmpdir|
+        # Initialize before touching.
+        Foresite::Cli.new.invoke(:init, [], {
+          d: tmpdir
+        })
+
+        yyyymmdd = Time.now.strftime('%Y%m%d')
+
+        expected_stdout = ForesiteRSpec.cli_lines([
+          "Created file #{tmpdir}/md/#{yyyymmdd}-jackdaws-love-my-big-sphinx-of-quartz.md"
+        ])
+
+        expect {
+          Foresite::Cli.new.invoke(:touch, [
+            'Jackdaws Love my Big Sphinx of Quartz'
+          ], {
+            d: tmpdir
+          })
+
+          expect(Pathname.new("#{tmpdir}/md/#{yyyymmdd}-jackdaws-love-my-big-sphinx-of-quartz.md")).to be_file
+        }.to output(expected_stdout).to_stdout
+      end
+    end
+
+    it "should not duplicate an existing markdown file"
   end
 
   describe "build" do
