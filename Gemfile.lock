@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    foresite (0.1.0)
+    foresite (1.0.0)
       kramdown (~> 2.4)
       thor (~> 1.2)
       zeitwerk (~> 2.6)
