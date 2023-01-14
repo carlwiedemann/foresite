@@ -25,14 +25,10 @@ module Foresite
       `template.rhtml` as a sample template.
 
       Does not overwrite existing directories.
-
-      You can optionally specify the working direction option `-d`, which will manually set the root directory (This is
-      mostly used for testing).
     LONGDESC
-    method_options d: :string
 
     def init
-      path_to_directory = options.d || Dir.pwd
+      path_to_directory = Foresite.get_root_directory
 
       if Dir.exist?(path_to_directory)
         if File.writable?(path_to_directory)
@@ -83,14 +79,10 @@ module Foresite
 
       $ foresite touch "Happy new year!"
       \x5> Created file /Users/carlos/my_project/md/20230114-happy-new-year.md
-
-      You can optionally specify the working direction option `-d`, which will manually set the root directory (This is
-      mostly used for testing).
     LONGDESC
-    method_options d: :string
 
     def touch(title)
-      path_to_parent_directory = options.d || Dir.pwd
+      path_to_parent_directory = Foresite.get_root_directory
       path_to_markdown_directory = File.join(path_to_parent_directory, Foresite::DIRNAME_MARKDOWN)
 
       time_now = Time.now
