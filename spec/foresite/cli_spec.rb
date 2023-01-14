@@ -71,21 +71,58 @@ RSpec.describe Foresite::Cli do
         # Initialize before touching.
         Foresite::Cli.new.invoke(:init)
 
-        yyyymmdd = Time.now.strftime('%Y%m%d')
+        time_now = Time.now
 
-        expected_stdout = ForesiteRSpec.cli_lines([
-          "Created file #{tmpdir}/md/#{yyyymmdd}-jackdaws-love-my-big-sphinx-of-quartz.md"
-        ])
+        expected_path_to_file = "#{tmpdir}/md/#{time_now.strftime('%Y%m%d')}-jackdaws-love-my-big-sphinx-of-quartz.md"
+        expected_stdout = ForesiteRSpec.cli_line("Created file #{expected_path_to_file}")
+        expected_file_content = <<~EOF
+        # Jackdaws Love my Big Sphinx of Quartz
+
+        #{time_now.strftime('%F')}
+
+        EOF
 
         touch_args = ['Jackdaws Love my Big Sphinx of Quartz']
 
         expect { Foresite::Cli.new.invoke(:touch, touch_args) }.to output(expected_stdout).to_stdout
-
-        expect(Pathname.new("#{tmpdir}/md/#{yyyymmdd}-jackdaws-love-my-big-sphinx-of-quartz.md")).to be_file
+        expect(Pathname.new(expected_path_to_file)).to be_file
+        expect(File.read(expected_path_to_file)).to eq(expected_file_content)
       end
     end
 
-    it "should not duplicate an existing markdown file"
+    it "should not duplicate an existing markdown file" do
+      Dir.mktmpdir do |tmpdir|
+        ENV['FORESITE_ROOT'] = tmpdir
+
+        # Initialize before touching.
+        Foresite::Cli.new.invoke(:init)
+
+        time_now = Time.now
+
+        # First touch.
+        expected_path_to_file = "#{tmpdir}/md/#{time_now.strftime('%Y%m%d')}-jackdaws-love-my-big-sphinx-of-quartz.md"
+        existing_file_content = <<~EOF
+        # Jackdaws Love my Big Sphinx of Quartz
+
+        #{time_now.strftime('%F')}
+
+        Hear ye, hear ye.
+
+        EOF
+
+        touch_args = ['Jackdaws Love my Big Sphinx of Quartz']
+
+        # First touch.
+        Foresite::Cli.new.invoke(:touch, touch_args)
+        File.write(expected_path_to_file, existing_file_content)
+
+        # Second touch.
+        expected_stdout = ForesiteRSpec.cli_line("File #{expected_path_to_file} already exists")
+
+        expect { Foresite::Cli.new.invoke(:touch, touch_args) }.to output(expected_stdout).to_stdout
+        expect(File.read(expected_path_to_file)).to eq(existing_file_content)
+      end
+    end
   end
 
   describe "build" do

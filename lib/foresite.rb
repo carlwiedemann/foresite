@@ -15,6 +15,15 @@ module Foresite
 
   ENV_ROOT = 'FORESITE_ROOT'
 
+  def self.default_markdown_content(title, date)
+    <<~EOF
+    # #{title}
+
+    #{date}
+
+    EOF
+  end
+
   ##
   # Gets the root directory for the current CLI command.
   #
