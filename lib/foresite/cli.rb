@@ -2,7 +2,7 @@ module Foresite
   ##
   # Cli class.
   #
-  # For generation of files.
+  # For CLI functionality to generate static content.
   #
   class Cli < ::Thor
     ##

@@ -192,7 +192,7 @@ RSpec.describe Foresite::Cli do
         expect(File.read(expected_path_to_index_file)).to include(expected_index_file_content)
 
         # They should also use the top-level HTML template, we can just use a dummy string to confirm.
-        expected_template_content = "<title>Another foresite website</title>"
+        expected_template_content = "<title>Another Foresite Blog</title>"
         expect(File.read(expected_path_to_first_file)).to include(expected_template_content)
         expect(File.read(expected_path_to_second_file)).to include(expected_template_content)
         expect(File.read(expected_path_to_index_file)).to include(expected_template_content)
