@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 require "thor"
-
+require "kramdown"
 require "zeitwerk"
+
 loader = Zeitwerk::Loader.for_gem
 loader.setup
 
@@ -13,13 +14,14 @@ module Foresite
   PATH_TO_SAMPLE_TEMPLATE = File.join(__dir__, "skeleton", "sample_template.rhtml")
   FILENAME_TEMPLATE = "template.rhtml"
 
-  ENV_ROOT = 'FORESITE_ROOT'
+  ENV_ROOT = "FORESITE_ROOT"
 
+  # @todo Provide option to use template instead.
   def self.default_markdown_content(title, date)
     <<~EOF
-    # #{title}
+      # #{title}
 
-    #{date}
+      #{date}
 
     EOF
   end

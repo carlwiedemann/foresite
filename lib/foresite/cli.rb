@@ -68,7 +68,7 @@ module Foresite
       end
     end
 
-    desc "touch [TITLE]", "Creates a new `.md` file with TITLE in `md` directory."
+    desc "touch [TITLE]", "Creates new `.md` file with TITLE in `#{Foresite::DIRNAME_MARKDOWN}` directory."
     long_desc <<-LONGDESC
       Creates a markdown file for usage as a post, with optional title.
 
@@ -84,19 +84,89 @@ module Foresite
     def touch(title)
       path_to_markdown_directory = File.join(Foresite.get_root_directory, Foresite::DIRNAME_MARKDOWN)
 
+      unless Dir.exist?(path_to_markdown_directory)
+        warn("No `#{Foresite::DIRNAME_MARKDOWN}` directory, did you run `foresite init` yet?")
+        exit(1)
+      end
+
       time_now = Time.now
 
-      base_filename = time_now.strftime('%Y%m%d')
-      slug = title.downcase.gsub(/[^a-z]/i, ' ').gsub(/ +/, '-')
+      base_filename = time_now.strftime("%Y%m%d")
+      slug = title.downcase.gsub(/[^a-z]/i, " ").gsub(/ +/, "-")
 
       path_to_markdown_file = File.join(path_to_markdown_directory, "#{base_filename}-#{slug}.md")
 
       if File.exist?(path_to_markdown_file)
         $stdout.puts("File #{path_to_markdown_file} already exists")
       else
-        File.write(path_to_markdown_file, Foresite.default_markdown_content(title, time_now.strftime('%F')))
+        File.write(path_to_markdown_file, Foresite.default_markdown_content(title, time_now.strftime("%F")))
         $stdout.puts("Created file #{path_to_markdown_file}")
       end
+    end
+
+    desc "build", "Generates HTML from markdown into `out` directory."
+    long_desc <<-LONGDESC
+      Creates HTML files from all markdown posts and writes them to the `out` directory.
+
+      The names of the HTML files should match the names of the markdown files but will use `.html` as the file
+      extension instead of `.md`.
+    LONGDESC
+
+    def build
+      path_to_root_directory = Foresite.get_root_directory
+      path_to_markdown_dir = File.join(path_to_root_directory, Foresite::DIRNAME_MARKDOWN)
+      path_to_output_dir = File.join(path_to_root_directory, Foresite::DIRNAME_OUTPUT)
+      path_to_template_file = File.join(path_to_root_directory, Foresite::FILENAME_TEMPLATE)
+
+      # Wipe all output files.
+      Dir.glob(File.join(path_to_output_dir, "*")).each { File.delete(_1) }
+
+      markdown_enum = Dir.glob(File.join(path_to_markdown_dir, "*.md"))
+
+      links = []
+      markdown_enum.each do |path_to_markdown|
+        markdown_content = File.read(path_to_markdown)
+
+        content = ::Kramdown::Document.new(markdown_content).to_html
+        filename_markdown = File.basename(path_to_markdown)
+        path_to_html = File.join(path_to_output_dir, filename_markdown.gsub(/\.md$/, ".html"))
+
+        File.write(path_to_html, Foresite::Renderer.render(path_to_template_file, {
+          content: content
+        }))
+
+        puts "Created file #{path_to_html}"
+
+        title = markdown_content.split("\n").first { |line| /^# [a-z]/i =~ line }.gsub(/^#/, "").strip
+
+        iso_no_space = filename_markdown.split("-").first
+        iso_spaces = "#{iso_no_space[0..3]}-#{iso_no_space[4..5]}-#{iso_no_space[6..7]}"
+
+        links.push({
+          href: File.basename(path_to_html),
+          title: title,
+          date: iso_spaces
+        })
+      end
+
+      if links.count > 0
+        # @todo Can we use erb for this instead?
+        inner_nav = links.map do |link|
+          "  <li>#{link[:date]} <a href=\"#{link[:href]}\">#{link[:title]}</a></li>\n"
+        end
+
+        index_content = "<ul>\n#{inner_nav.join}</ul>\n"
+      else
+        index_content = ""
+      end
+
+      # Generate index file.
+      path_to_index_html = File.join(path_to_output_dir, "index.html")
+      File.write(path_to_index_html, Foresite::Renderer.render(path_to_template_file, {
+        content: index_content
+      }))
+
+      puts "Created file #{path_to_index_html}"
     end
   end
 end
