@@ -21,7 +21,7 @@ module Foresite
     desc "init", "Initializes foresite in current directory."
     long_desc <<-LONGDESC
       Initializes foresite in the current directory.
-      Creates a directory `md` for storing posts, a directory `out` for storing generated output, and a file
+      Creates a directory `#{Foresite::DIRNAME_MARKDOWN}` for storing posts, a directory `#{Foresite::DIRNAME_OUTPUT}` for storing generated output, and a file
       `template.rhtml` as a sample template.
 
       Does not overwrite existing directories.
@@ -78,7 +78,7 @@ module Foresite
       Example: (If today is January 14, 2023, and the command is run from /Users/carlos/my_project)
 
       $ foresite touch "Happy new year!"
-      \x5> Created file /Users/carlos/my_project/md/20230114-happy-new-year.md
+      \x5> Created file /Users/carlos/my_project/#{Foresite::DIRNAME_MARKDOWN}/20230114-happy-new-year.md
     LONGDESC
 
     def touch(title)
@@ -104,9 +104,9 @@ module Foresite
       end
     end
 
-    desc "build", "Generates HTML from markdown into `out` directory."
+    desc "build", "Generates HTML from markdown into `#{Foresite::DIRNAME_OUTPUT}` directory."
     long_desc <<-LONGDESC
-      Creates HTML files from all markdown posts and writes them to the `out` directory.
+      Creates HTML files from all markdown posts and writes them to the `#{Foresite::DIRNAME_OUTPUT}` directory.
 
       The names of the HTML files should match the names of the markdown files but will use `.html` as the file
       extension instead of `.md`.
@@ -118,13 +118,25 @@ module Foresite
       path_to_output_dir = File.join(path_to_root_directory, Foresite::DIRNAME_OUTPUT)
       path_to_template_file = File.join(path_to_root_directory, Foresite::FILENAME_TEMPLATE)
 
+      [path_to_markdown_dir, path_to_output_dir].any? do |path|
+        unless Dir.exist?(path)
+          warn("No `#{Foresite::DIRNAME_MARKDOWN}` directory or `#{Foresite::DIRNAME_OUTPUT}` directory, did you run `foresite init` yet?")
+          exit(1)
+        end
+      end
+
       # Wipe all output files.
       Dir.glob(File.join(path_to_output_dir, "*")).each { File.delete(_1) }
 
-      markdown_enum = Dir.glob(File.join(path_to_markdown_dir, "*.md"))
+      markdown_files = Dir.glob(File.join(path_to_markdown_dir, "*.md"))
+
+      if markdown_files.count == 0
+        warn("No `.md` files, try running `foresite touch`")
+        exit(1)
+      end
 
       links = []
-      markdown_enum.each do |path_to_markdown|
+      markdown_files.each do |path_to_markdown|
         markdown_content = File.read(path_to_markdown)
 
         content = ::Kramdown::Document.new(markdown_content).to_html

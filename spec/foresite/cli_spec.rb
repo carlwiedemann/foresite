@@ -64,7 +64,7 @@ RSpec.describe Foresite::Cli do
   end
 
   describe "touch" do
-    it "shows error if initialization has not happened" do
+    it "returns error if initialization has not happened" do
       Dir.mktmpdir do |tmpdir|
         ENV["FORESITE_ROOT"] = tmpdir
 
@@ -199,8 +199,32 @@ RSpec.describe Foresite::Cli do
       end
     end
 
-    it "shows error if initialization has not happened"
+    it "returns error if initialization has not happened" do
+      Dir.mktmpdir do |tmpdir|
+        ENV["FORESITE_ROOT"] = tmpdir
 
-    it "shows error if no markdown files are available"
+        exptected_stderr = ForesiteRSpec.cli_line("No `md` directory or `out` directory, did you run `foresite init` yet?")
+        expected_exit_code = 1
+
+        expect { Foresite::Cli.new.invoke(:build) }.to output(exptected_stderr).to_stderr \
+          .and(raise_error(SystemExit) { |error| expect(error.status).to eq(expected_exit_code) })
+      end
+    end
+
+    it "returns error if no markdown files are available" do
+      Dir.mktmpdir do |tmpdir|
+        ENV["FORESITE_ROOT"] = tmpdir
+
+        # Initialize, but don't touch any files.
+        Foresite::Cli.new.invoke(:init)
+
+        exptected_stderr = ForesiteRSpec.cli_line("No `.md` files, try running `foresite touch`")
+        expected_exit_code = 1
+
+        expect { Foresite::Cli.new.invoke(:build) }.to output(exptected_stderr).to_stderr \
+          .and(raise_error(SystemExit) { |error| expect(error.status).to eq(expected_exit_code) })
+      end
+
+    end
   end
 end
