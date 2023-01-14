@@ -75,11 +75,13 @@ RSpec.describe Foresite::Cli do
     end
   end
 
-  # it "should generate a blank markdown file" do
-  #
-  # end
-  #
-  # it "should generate HTML files from markdown files" do
-  #
-  # end
+  describe "touch" do
+    it "should generate a blank markdown file"
+  end
+
+  describe "build" do
+    # @todo Need fixtures
+    it "should generate HTML files from markdown files"
+    it "should generate an index HTML file listing all markdown files"
+  end
 end
