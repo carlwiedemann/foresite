@@ -73,12 +73,12 @@ module Foresite
       Creates a markdown file for usage as a post, with optional title.
 
       The name of the file will be the current date suffixed by the `TITLE` argument. The current date will be formatted
-      as `YYYYMMDD` and the title will be transformed to use lowercase alphanumeric characters, separated by hyphens.
+      as `YYYY-MM-DD` and the title will be transformed to use lowercase alphanumeric characters, separated by hyphens.
 
-      Example: (If today is January 14, 2023, and the command is run from /Users/carlos/my_project)
+      Example: (If today is 14 January 2023, and the command is run from /Users/carlos/my_project)
 
       $ foresite touch "Happy new year!"
-      \x5> Created file /Users/carlos/my_project/#{Foresite::DIRNAME_MARKDOWN}/20230114-happy-new-year.md
+      \x5> Created file /Users/carlos/my_project/#{Foresite::DIRNAME_MARKDOWN}/2023-01-14-happy-new-year.md
     LONGDESC
 
     def touch(title)
@@ -91,15 +91,15 @@ module Foresite
 
       time_now = Time.now
 
-      base_filename = time_now.strftime("%Y%m%d")
+      ymd = time_now.strftime("%F")
       slug = title.downcase.gsub(/[^a-z]/i, " ").gsub(/ +/, "-")
 
-      path_to_markdown_file = File.join(path_to_markdown_directory, "#{base_filename}-#{slug}.md")
+      path_to_markdown_file = File.join(path_to_markdown_directory, "#{ymd}-#{slug}.md")
 
       if File.exist?(path_to_markdown_file)
         $stdout.puts("File #{path_to_markdown_file} already exists")
       else
-        File.write(path_to_markdown_file, Foresite.default_markdown_content(title, time_now.strftime("%F")))
+        File.write(path_to_markdown_file, Foresite.default_markdown_content(title, ymd))
         $stdout.puts("Created file #{path_to_markdown_file}")
       end
     end
@@ -151,13 +151,10 @@ module Foresite
 
         title = markdown_content.split("\n").first { |line| /^# [a-z]/i =~ line }.gsub(/^#/, "").strip
 
-        iso_no_space = filename_markdown.split("-").first
-        iso_spaces = "#{iso_no_space[0..3]}-#{iso_no_space[4..5]}-#{iso_no_space[6..7]}"
-
         links.push({
           href: File.basename(path_to_html),
           title: title,
-          date: iso_spaces
+          date: /\d{4}-\d{2}-\d{2}/.match(filename_markdown)[0]
         })
       end
 

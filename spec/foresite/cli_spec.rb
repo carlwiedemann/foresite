@@ -83,14 +83,14 @@ RSpec.describe Foresite::Cli do
         # Initialize before touching.
         Foresite::Cli.new.invoke(:init)
 
-        time_now = Time.now
+        ymd = Time.now.strftime("%F")
 
-        expected_path_to_file = "#{tmpdir}/md/#{time_now.strftime("%Y%m%d")}-jackdaws-love-my-big-sphinx-of-quartz.md"
+        expected_path_to_file = "#{tmpdir}/md/#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.md"
         expected_stdout = ForesiteRSpec.cli_line("Created file #{expected_path_to_file}")
         expected_file_content = <<~EOF
           # Jackdaws Love my Big Sphinx of Quartz
 
-          #{time_now.strftime("%F")}
+          #{ymd}
 
         EOF
 
@@ -109,18 +109,18 @@ RSpec.describe Foresite::Cli do
         # Initialize before touching.
         Foresite::Cli.new.invoke(:init)
 
-        time_now = Time.now
+        ymd = Time.now.strftime("%F")
 
         touch_args = ["Jackdaws Love my Big Sphinx of Quartz"]
 
         # First touch.
         Foresite::Cli.new.invoke(:touch, touch_args)
         # Mutate file to confirm contents don't change.
-        expected_path_to_file = "#{tmpdir}/md/#{time_now.strftime("%Y%m%d")}-jackdaws-love-my-big-sphinx-of-quartz.md"
+        expected_path_to_file = "#{tmpdir}/md/#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.md"
         existing_file_content = <<~EOF
           # Jackdaws Love my Big Sphinx of Quartz
 
-          #{time_now.strftime("%F")}
+          #{ymd}
 
           Hear ye, hear ye.
 
@@ -145,12 +145,10 @@ RSpec.describe Foresite::Cli do
         Foresite::Cli.new.invoke(:touch, ["Jackdaws Love my Big Sphinx of Quartz"])
         Foresite::Cli.new.invoke(:touch, ["When Zombies Arrive, Quickly Fax Judge Pat"])
 
-        time_now = Time.now
-        yyyymmdd = time_now.strftime("%Y%m%d")
-        yyyy_mm_dd = time_now.strftime("%F")
+        ymd = Time.now.strftime("%F")
 
-        expected_path_to_first_file = "#{tmpdir}/out/#{yyyymmdd}-jackdaws-love-my-big-sphinx-of-quartz.html"
-        expected_path_to_second_file = "#{tmpdir}/out/#{yyyymmdd}-when-zombies-arrive-quickly-fax-judge-pat.html"
+        expected_path_to_first_file = "#{tmpdir}/out/#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.html"
+        expected_path_to_second_file = "#{tmpdir}/out/#{ymd}-when-zombies-arrive-quickly-fax-judge-pat.html"
         expected_path_to_index_file = "#{tmpdir}/out/index.html"
 
         expected_stdout = ForesiteRSpec.cli_lines([
@@ -168,21 +166,21 @@ RSpec.describe Foresite::Cli do
         expected_first_file_content = <<~EOF
           <h1 id="jackdaws-love-my-big-sphinx-of-quartz">Jackdaws Love my Big Sphinx of Quartz</h1>
 
-          <p>#{yyyy_mm_dd}</p>
+          <p>#{ymd}</p>
 
         EOF
 
         expected_second_file_content = <<~EOF
           <h1 id="when-zombies-arrive-quickly-fax-judge-pat">When Zombies Arrive, Quickly Fax Judge Pat</h1>
 
-          <p>#{yyyy_mm_dd}</p>
+          <p>#{ymd}</p>
 
         EOF
 
         expected_index_file_content = <<~EOF
           <ul>
-            <li>#{yyyy_mm_dd} <a href="#{yyyymmdd}-jackdaws-love-my-big-sphinx-of-quartz.html">Jackdaws Love my Big Sphinx of Quartz</a></li>
-            <li>#{yyyy_mm_dd} <a href="#{yyyymmdd}-when-zombies-arrive-quickly-fax-judge-pat.html">When Zombies Arrive, Quickly Fax Judge Pat</a></li>
+            <li>#{ymd} <a href="#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.html">Jackdaws Love my Big Sphinx of Quartz</a></li>
+            <li>#{ymd} <a href="#{ymd}-when-zombies-arrive-quickly-fax-judge-pat.html">When Zombies Arrive, Quickly Fax Judge Pat</a></li>
           </ul>
         EOF
 
@@ -224,7 +222,6 @@ RSpec.describe Foresite::Cli do
         expect { Foresite::Cli.new.invoke(:build) }.to output(exptected_stderr).to_stderr \
           .and(raise_error(SystemExit) { |error| expect(error.status).to eq(expected_exit_code) })
       end
-
     end
   end
 end
