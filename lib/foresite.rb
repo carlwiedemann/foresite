@@ -11,4 +11,5 @@ module Foresite
   DIRNAME_OUTPUT = "out"
 
   PATH_TO_SAMPLE_TEMPLATE = File.join(__dir__, "skeleton", "sample_template.rhtml")
+  FILENAME_TEMPLATE = "template.rhtml"
 end
