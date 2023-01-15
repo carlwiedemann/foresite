@@ -12,13 +12,7 @@ module Foresite
       true
     end
 
-    desc "say_hello NAME", "say hello to NAME"
-
-    def say_hello(name)
-      puts "Hello #{name}"
-    end
-
-    desc "init", "Initializes foresite in current directory."
+    desc "init", "Initializes foresite in current directory"
     long_desc <<-LONGDESC
       Initializes foresite in the current directory.
       Creates a directory `#{Foresite::DIRNAME_MARKDOWN}` for storing posts, a directory `#{Foresite::DIRNAME_OUTPUT}` for storing generated output, and a file
@@ -68,7 +62,7 @@ module Foresite
       end
     end
 
-    desc "touch [TITLE]", "Creates new `.md` file with TITLE in `#{Foresite::DIRNAME_MARKDOWN}` directory."
+    desc "touch [TITLE]", "Creates new `.md` file with TITLE in `#{Foresite::DIRNAME_MARKDOWN}` directory"
     long_desc <<-LONGDESC
       Creates a markdown file for usage as a post, with optional title.
 
@@ -92,7 +86,7 @@ module Foresite
       time_now = Time.now
 
       ymd = time_now.strftime("%F")
-      slug = title.downcase.gsub(/[^a-z]/i, " ").gsub(/ +/, "-")
+      slug = title.downcase.gsub(/[^a-z]/i, " ").strip.gsub(/ +/, "-")
 
       path_to_markdown_file = File.join(path_to_markdown_directory, "#{ymd}-#{slug}.md")
 
@@ -104,7 +98,7 @@ module Foresite
       end
     end
 
-    desc "build", "Generates HTML from markdown into `#{Foresite::DIRNAME_OUTPUT}` directory."
+    desc "build", "Generates HTML from markdown into `#{Foresite::DIRNAME_OUTPUT}` directory"
     long_desc <<-LONGDESC
       Creates HTML files from all markdown posts and writes them to the `#{Foresite::DIRNAME_OUTPUT}` directory.
 

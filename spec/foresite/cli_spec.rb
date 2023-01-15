@@ -88,13 +88,13 @@ RSpec.describe Foresite::Cli do
         expected_path_to_file = "#{tmpdir}/md/#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.md"
         expected_stdout = ForesiteRSpec.cli_line("Created file #{expected_path_to_file}")
         expected_file_content = <<~EOF
-          # Jackdaws Love my Big Sphinx of Quartz
+          # Jackdaws Love my Big Sphinx of Quartz!
 
           #{ymd}
 
         EOF
 
-        touch_args = ["Jackdaws Love my Big Sphinx of Quartz"]
+        touch_args = ["Jackdaws Love my Big Sphinx of Quartz!"]
 
         expect { Foresite::Cli.new.invoke(:touch, touch_args) }.to output(expected_stdout).to_stdout
         expect(Pathname.new(expected_path_to_file)).to be_file
@@ -111,14 +111,14 @@ RSpec.describe Foresite::Cli do
 
         ymd = Time.now.strftime("%F")
 
-        touch_args = ["Jackdaws Love my Big Sphinx of Quartz"]
+        touch_args = ["Jackdaws Love my Big Sphinx of Quartz!"]
 
         # First touch.
         Foresite::Cli.new.invoke(:touch, touch_args)
         # Mutate file to confirm contents don't change.
         expected_path_to_file = "#{tmpdir}/md/#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.md"
         existing_file_content = <<~EOF
-          # Jackdaws Love my Big Sphinx of Quartz
+          # Jackdaws Love my Big Sphinx of Quartz!
 
           #{ymd}
 
@@ -142,7 +142,7 @@ RSpec.describe Foresite::Cli do
 
         # Initialize and touch two files.
         Foresite::Cli.new.invoke(:init)
-        Foresite::Cli.new.invoke(:touch, ["Jackdaws Love my Big Sphinx of Quartz"])
+        Foresite::Cli.new.invoke(:touch, ["Jackdaws Love my Big Sphinx of Quartz!"])
         Foresite::Cli.new.invoke(:touch, ["When Zombies Arrive, Quickly Fax Judge Pat"])
 
         ymd = Time.now.strftime("%F")
@@ -164,7 +164,7 @@ RSpec.describe Foresite::Cli do
         expect(Pathname.new(expected_path_to_second_file)).to be_file
 
         expected_first_file_content = <<~EOF
-          <h1 id="jackdaws-love-my-big-sphinx-of-quartz">Jackdaws Love my Big Sphinx of Quartz</h1>
+          <h1 id="jackdaws-love-my-big-sphinx-of-quartz">Jackdaws Love my Big Sphinx of Quartz!</h1>
 
           <p>#{ymd}</p>
 
@@ -179,7 +179,7 @@ RSpec.describe Foresite::Cli do
 
         expected_index_file_content = <<~EOF
           <ul>
-            <li>#{ymd} <a href="#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.html">Jackdaws Love my Big Sphinx of Quartz</a></li>
+            <li>#{ymd} <a href="#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.html">Jackdaws Love my Big Sphinx of Quartz!</a></li>
             <li>#{ymd} <a href="#{ymd}-when-zombies-arrive-quickly-fax-judge-pat.html">When Zombies Arrive, Quickly Fax Judge Pat</a></li>
           </ul>
         EOF
