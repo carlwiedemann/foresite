@@ -1,36 +1,28 @@
-# Foresite
+# Foresite - An Extremely Minimal Static Site Generator
 
-Foresite is an extremely minimal static site generator. It is a single executable that converts markdown and a single template to generate a static site.
-
-Foresite is a great choice for simple blogs hosted on [GitHub Pages](https://pages.github.com/) or similar.
-
-## Requirements
-
-* Ruby >= 2.7.0
+CLI executable that converts markdown wrapped in a single template to static HTML for simple blogs hosted on [GitHub Pages](https://pages.github.com/) or similar.
 
 ## Installation
 
-    gem install foresite
+The only requirement is Ruby >= 2.7.0.
 
-## Example: Hello World
+    $ gem install foresite
 
-    mkdir my_blog 
-    cd my_blog
-    foresite init
-    foresite touch "Hello World"
-    foresite build
+## Quick start: Hello World
 
-Quickly view in a browser using Python's `http.server`:
-
-    python -m http.server 8000 --directory out
+    $ mkdir my_blog                 # Create a project directory
+    $ cd my_blog
+    $ foresite init                 # Initialize subdirectories for markdown and HTML
+    $ foresite touch "Hello World"  # Create first post as markdown
+    $ foresite build                # Converts markdown to HTML
 
 ![Screenshot of Hello World post](screenshot.png)
 
-## Detailed instructions
+## Getting started guide
 
 ### 1. Create your project directory
 
-After installing foresite, create a project directory for your site, and run `foresite init`:
+After installing foresite using `gem install foresite`, create a project directory for your site, and run `foresite init` from within it:
 
     $ mkdir my_blog
     $ cd my_blog
@@ -39,15 +31,17 @@ After installing foresite, create a project directory for your site, and run `fo
     Created directory /Users/carlwiedemann/my_blog/out
     Created file /Users/carlwiedemann/my_blog/template.rhtml
 
-A single template file and two subdirectories are created:
+A single wrapper template file and two subdirectories are created.
 
-* `md` subdirectory: Will contain markdown files (.md) for you to edit. The markdown files are the *source of truth* for your site's content.
-* `out` subdirectory: Will contain HTML files (.md) generated from the markdown and an `index.html` file for your site's home page.
-* The `template.rhtml` file is an HTML wrapper template using [Embedded Ruby (ERB)](https://docs.ruby-lang.org/en/3.2/ERB.html) for all generated the HTML files.
+Some facts:
+
+* `md` subdirectory contains markdown files for editing. Each markdown file will be a separate post and *source of truth* for your site's content.
+* `out` subdirectory contains generated HTML files including an `index.html` file listing all posts.
+* `template.rhtml` file is a sole wrapper template using [Embedded Ruby (ERB)](https://docs.ruby-lang.org/en/3.2/ERB.html).
 
 ### 2. Write your first post
 
-You can create your first post with `foresite touch`, passing a title as its sole argument:
+Run `foresite touch` to generate a new markdown file in the `md` subdirectory. The post title is its sole argument:
 
     $ foresite touch "Welcome to my site"
     Created file /Users/carlwiedemann/my_blog/md/2023-01-15-welcome-to-my-site.md
@@ -56,34 +50,39 @@ You can create your first post with `foresite touch`, passing a title as its sol
     
     2023-01-15
 
-A single markdown file is generated in the `md` subdirectory. **This file is for you to edit.**
+A single markdown file is created in the `md` subdirectory. **This file is for you to edit.**
 
-* Its title is the first line formatted as a markdown H1.
-* Today's date in YYYY-MM-DD format is the first markdown paragraph.
-* The date and title are slugified to form the filename. *Please keep the date in the filename, it is used to generate the index page.*
+Some facts:
 
-### 3. Craft your HTML wrapper template
+* The title is the first line formatted as H1 (mandatory).
+* Current date in YYYY-MM-DD format is the first markdown paragraph (optional).
+* Current date and title are "slugified" for filename.
+
+### 3. Modify your wrapper template as desired
 
 The `template.rhtml` file wraps all of your markdown. **This file is for you to edit.**
 
-There is only one template variable, `@content [String]` which holds parsed markdown as its HTML equivalent.
+There is only one template variable, `@content`. For generated posts, `@content` is post markdown converted to HTML. For the `index.html` file, `@content` is a list of links to posts in reverse-chronological order.
 
-#### 4. Generate HTML from markdown
+### 4. Generate HTML from markdown
 
-When you are ready to generate HTML from your markdown files and template file, run `foresite build`:
+Run `foresite build` to create HTML in the `out` subdirectory:
 
     $ foresite build
     Created file /Users/carlwiedemann/my_blog/out/2023-01-15-welcome-to-my-site.html
     Created file /Users/carlwiedemann/my_blog/out/index.html
 
-In this example, two HTML files are generated in the `out` directory:
+In this example, two HTML files are created.
 
-* For every markdown file in the `md` subdirectory an equivalent HTML file is generated in the `out` subdirectory, parsed markdown contents being wrapped with wrapper template.
-* A single `index.html` file, which provides `@content` with an `<ul>` holding links to all posts, and their dates.
-  * The titles in the list are parsed from the first H1 tag in each markdown file.
-  * The dates in the list are parsed from the filename.
+Some facts:
 
-In this example, the `index.html` file contains the following:
+* For every markdown file in the `md` subdirectory an equivalent HTML file is generated in the `out` subdirectory, where the parsed markdown is wrapped with wrapper template markup.
+* A single `index.html` file, which provides `@content` with an `<ul>` holding links to all posts, prefixed with post date.
+  * Titles are parsed from the first H1 tag in each markdown file.
+  * Dates are parsed from the filename.
+* Re-running `foresite build` removes all files in the `out` subdirectory.
+
+In this example, the `index.html` will contain:
 
 ```html
 <ul>
@@ -97,13 +96,19 @@ You'll want to use the `out` subdirectory as its publishing source, see [Configu
 
 ## Development
 
-After checking out the repo, run `bundle` to install dependencies. Then, run `rake spec` to run the tests.
+1. Clone
+2. `bundle` to install dependencies
+3. `bundle exec rake` to run tests & linter
 
-To install this gem onto your local machine, run `bundle exec rake install:local`. You will then be able to execute the CLI by running `foresite` in a terminal.
+To install this gem from local source, run `bundle exec rake install:local`.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/carlwiedemann/foresite.
+Bug reports and pull requests are welcome. The goals of Foresite are:
+
+* Extremely lightweight
+* Simple to use & understand
+* Light on features
 
 ## License
 
