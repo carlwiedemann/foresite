@@ -11,9 +11,13 @@ The only requirement is Ruby >= 2.7.0.
 ## Quick start: Hello World
 
     $ mkdir my_blog                 # Create a project directory
+
     $ cd my_blog
+
     $ foresite init                 # Initialize subdirectories for markdown and HTML
+
     $ foresite touch "Hello World"  # Create first post as markdown
+
     $ foresite build                # Converts markdown to HTML
 
 ![Screenshot of Hello World post](screenshot.png)
@@ -25,13 +29,18 @@ The only requirement is Ruby >= 2.7.0.
 After installing foresite using `gem install foresite`, create a project directory for your site, and run `foresite init` from within it:
 
     $ mkdir my_blog
-    $ cd my_blog
-    $ foresite init
-    Created directory /Users/carlwiedemann/my_blog/md
-    Created directory /Users/carlwiedemann/my_blog/out
-    Created file /Users/carlwiedemann/my_blog/template.rhtml
 
-A single wrapper template file and two subdirectories are created.
+    $ cd my_blog
+
+    $ foresite init
+    Created md/
+    Created out/
+    Created erb/
+    Created erb/post.md.erb
+    Created erb/wrapper.html.erb
+    Created erb/_list.html.erb
+
+Three subdirectories are created
 
 Some facts:
 
@@ -44,8 +53,9 @@ Some facts:
 Run `foresite touch` to generate a new markdown file in the `md` subdirectory. The post title is its sole argument:
 
     $ foresite touch "Welcome to my site"
-    Created file /Users/carlwiedemann/my_blog/md/2023-01-15-welcome-to-my-site.md
-    $ cat md
+    Created md/2023-01-15-welcome-to-my-site.md
+
+    $ cat md/2023-01-15-welcome-to-my-site.md
     # Welcome to my site
     
     2023-01-15
@@ -69,8 +79,8 @@ There is only one template variable, `@content`. For generated posts, `@content`
 Run `foresite build` to create HTML in the `out` subdirectory:
 
     $ foresite build
-    Created file /Users/carlwiedemann/my_blog/out/2023-01-15-welcome-to-my-site.html
-    Created file /Users/carlwiedemann/my_blog/out/index.html
+    Created out/2023-01-15-welcome-to-my-site.html
+    Created out/index.html
 
 In this example, two HTML files are created.
 

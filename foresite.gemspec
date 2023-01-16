@@ -26,7 +26,9 @@ Gem::Specification.new do |spec|
     "lib/foresite/cli.rb",
     "lib/foresite/renderer.rb",
     "lib/foresite/version.rb",
-    "lib/skeleton/sample_template.rhtml"
+    "lib/skeleton/_list.html.erb",
+    "lib/skeleton/post.md.erb",
+    "lib/skeleton/wrapper.html.erb",
   ]
 
   spec.bindir = "bin"

@@ -26,32 +26,63 @@ module Foresite
 
       if Dir.exist?(path_to_root_directory)
         if File.writable?(path_to_root_directory)
-          # Create markdown directory.
-          path_to_markdown_dir = File.join(path_to_root_directory, Foresite::DIRNAME_MARKDOWN)
-          if Dir.exist?(path_to_markdown_dir)
-            $stdout.puts("Directory #{path_to_markdown_dir} already exists")
+          # Create md directory.
+          full_path_to_dir_md = File.join(path_to_root_directory, Foresite::DIRNAME_MARKDOWN)
+          if Dir.exist?(full_path_to_dir_md)
+            $stdout.puts("#{Foresite::DIRNAME_MARKDOWN}/ already exists")
           else
-            Dir.mkdir(path_to_markdown_dir)
-            $stdout.puts("Created directory #{path_to_markdown_dir}")
+            Dir.mkdir(full_path_to_dir_md)
+            $stdout.puts("Created #{Foresite::DIRNAME_MARKDOWN}/")
           end
 
           # Create output directory.
-          path_to_output_dir = File.join(path_to_root_directory, Foresite::DIRNAME_OUTPUT)
-          if Dir.exist?(path_to_output_dir)
-            $stdout.puts("Directory #{path_to_output_dir} already exists")
+          full_path_to_dir_out = File.join(path_to_root_directory, Foresite::DIRNAME_OUTPUT)
+          if Dir.exist?(full_path_to_dir_out)
+            $stdout.puts("#{Foresite::DIRNAME_OUTPUT}/ already exists")
           else
-            Dir.mkdir(path_to_output_dir)
-            $stdout.puts("Created directory #{path_to_output_dir}")
+            Dir.mkdir(full_path_to_dir_out)
+            $stdout.puts("Created #{Foresite::DIRNAME_OUTPUT}/")
           end
 
-          # Create base template.
-          path_to_template_file = File.join(path_to_root_directory, Foresite::FILENAME_TEMPLATE)
-          if File.exist?(path_to_template_file)
-            $stdout.puts("File #{path_to_template_file} already exists")
+          # Create erb directory.
+          full_path_to_dir_erb = File.join(path_to_root_directory, Foresite::DIRNAME_ERB)
+          if Dir.exist?(full_path_to_dir_erb)
+            $stdout.puts("#{Foresite::DIRNAME_ERB}/ already exists")
           else
-            File.copy_stream(Foresite::PATH_TO_SAMPLE_TEMPLATE, path_to_template_file)
-            $stdout.puts("Created file #{path_to_template_file}")
+            Dir.mkdir(full_path_to_dir_erb)
+            $stdout.puts("Created #{Foresite::DIRNAME_ERB}/")
           end
+
+          # Create post.
+          full_path_to_file_post = File.join(full_path_to_dir_erb, Foresite::FILENAME_POST_MD)
+          relative_path_to_file_post = File.join(Foresite::DIRNAME_ERB, Foresite::FILENAME_POST_MD)
+          if File.exist?(full_path_to_file_post)
+            $stdout.puts("#{relative_path_to_file_post} already exists")
+          else
+            File.copy_stream(Foresite::PATH_TO_DEFAULT_POST_MD, full_path_to_file_post)
+            $stdout.puts("Created #{relative_path_to_file_post}")
+          end
+
+          # Create wrapper.
+          full_path_to_file_wrapper = File.join(full_path_to_dir_erb, Foresite::FILENAME_WRAPPER_HTML)
+          relative_path_to_file_wrapper = File.join(Foresite::DIRNAME_ERB, Foresite::FILENAME_WRAPPER_HTML)
+          if File.exist?(full_path_to_file_wrapper)
+            $stdout.puts("#{relative_path_to_file_wrapper} already exists")
+          else
+            File.copy_stream(Foresite::PATH_TO_DEFAULT_WRAPPER_HTML, full_path_to_file_wrapper)
+            $stdout.puts("Created #{relative_path_to_file_wrapper}")
+          end
+
+          # Create list.
+          full_path_to_file_list = File.join(full_path_to_dir_erb, Foresite::FILENAME_LIST_HTML)
+          relative_path_to_file_list = File.join(Foresite::DIRNAME_ERB, Foresite::FILENAME_LIST_HTML)
+          if File.exist?(full_path_to_file_list)
+            $stdout.puts("#{relative_path_to_file_list} already exists")
+          else
+            File.copy_stream(Foresite::PATH_TO_DEFAULT_LIST_HTML, full_path_to_file_list)
+            $stdout.puts("Created #{relative_path_to_file_list}")
+          end
+
         else
           warn("Cannot write to directory #{path_to_root_directory}")
           exit(1)
@@ -76,9 +107,9 @@ module Foresite
     LONGDESC
 
     def touch(title)
-      path_to_markdown_directory = File.join(Foresite.get_root_directory, Foresite::DIRNAME_MARKDOWN)
+      full_path_to_dir_md = File.join(Foresite.get_root_directory, Foresite::DIRNAME_MARKDOWN)
 
-      unless Dir.exist?(path_to_markdown_directory)
+      unless Dir.exist?(full_path_to_dir_md)
         warn("No `#{Foresite::DIRNAME_MARKDOWN}` directory, did you run `foresite init` yet?")
         exit(1)
       end
@@ -88,13 +119,15 @@ module Foresite
       ymd = time_now.strftime("%F")
       slug = title.downcase.gsub(/[^a-z]/i, " ").strip.gsub(/ +/, "-")
 
-      path_to_markdown_file = File.join(path_to_markdown_directory, "#{ymd}-#{slug}.md")
+      filename_md = "#{ymd}-#{slug}.md"
+      full_path_to_file_md = File.join(full_path_to_dir_md, filename_md)
+      relative_path_to_file_md = File.join(Foresite::DIRNAME_MARKDOWN, filename_md)
 
-      if File.exist?(path_to_markdown_file)
-        $stdout.puts("File #{path_to_markdown_file} already exists")
+      if File.exist?(full_path_to_file_md)
+        $stdout.puts("File #{relative_path_to_file_md} already exists")
       else
-        File.write(path_to_markdown_file, Foresite.default_markdown_content(title, ymd))
-        $stdout.puts("Created file #{path_to_markdown_file}")
+        File.write(full_path_to_file_md, Foresite.default_markdown_content(title, ymd))
+        $stdout.puts("Created #{relative_path_to_file_md}")
       end
     end
 
@@ -108,11 +141,12 @@ module Foresite
 
     def build
       path_to_root_directory = Foresite.get_root_directory
-      path_to_markdown_dir = File.join(path_to_root_directory, Foresite::DIRNAME_MARKDOWN)
-      path_to_output_dir = File.join(path_to_root_directory, Foresite::DIRNAME_OUTPUT)
-      path_to_template_file = File.join(path_to_root_directory, Foresite::FILENAME_TEMPLATE)
+      full_path_to_dir_md = File.join(path_to_root_directory, Foresite::DIRNAME_MARKDOWN)
+      full_path_to_dir_out = File.join(path_to_root_directory, Foresite::DIRNAME_OUTPUT)
+      full_path_to_dir_erb = File.join(path_to_root_directory, Foresite::DIRNAME_ERB)
+      full_path_to_wrapper_html = File.join(full_path_to_dir_erb, Foresite::FILENAME_WRAPPER_HTML)
 
-      [path_to_markdown_dir, path_to_output_dir].any? do |path|
+      [full_path_to_dir_md, full_path_to_dir_out].any? do |path|
         unless Dir.exist?(path)
           warn("No `#{Foresite::DIRNAME_MARKDOWN}` directory or `#{Foresite::DIRNAME_OUTPUT}` directory, did you run `foresite init` yet?")
           exit(1)
@@ -120,9 +154,9 @@ module Foresite
       end
 
       # Wipe all output files.
-      Dir.glob(File.join(path_to_output_dir, "*")).each { File.delete(_1) }
+      Dir.glob(File.join(full_path_to_dir_out, "*")).each { File.delete(_1) }
 
-      markdown_files = Dir.glob(File.join(path_to_markdown_dir, "*.md"))
+      markdown_files = Dir.glob(File.join(full_path_to_dir_md, "*.md"))
 
       if markdown_files.count == 0
         warn("No `.md` files, try running `foresite touch`")
@@ -135,18 +169,20 @@ module Foresite
 
         content = ::Kramdown::Document.new(markdown_content).to_html
         filename_markdown = File.basename(path_to_markdown)
-        path_to_html = File.join(path_to_output_dir, filename_markdown.gsub(/\.md$/, ".html"))
+        filename_html = filename_markdown.gsub(/\.md$/, ".html")
+        full_path_to_file_html = File.join(full_path_to_dir_out, filename_html)
+        relative_path_to_file_html = File.join(Foresite::DIRNAME_OUTPUT, filename_html)
 
-        File.write(path_to_html, Foresite::Renderer.render(path_to_template_file, {
+        File.write(full_path_to_file_html, Foresite::Renderer.render(full_path_to_wrapper_html, {
           content: content
         }))
 
-        puts "Created file #{path_to_html}"
+        puts "Created #{relative_path_to_file_html}"
 
         title = markdown_content.split("\n").first { |line| /^# [a-z]/i =~ line }.gsub(/^#/, "").strip
 
         links.push({
-          href: File.basename(path_to_html),
+          href: File.basename(full_path_to_file_html),
           title: title,
           date: /\d{4}-\d{2}-\d{2}/.match(filename_markdown)[0]
         })
@@ -164,12 +200,14 @@ module Foresite
       end
 
       # Generate index file.
-      path_to_index_html = File.join(path_to_output_dir, "index.html")
-      File.write(path_to_index_html, Foresite::Renderer.render(path_to_template_file, {
+      index_filename = "index.html"
+      full_path_to_index_html = File.join(full_path_to_dir_out, index_filename)
+      relative_path_to_index_html = File.join(Foresite::DIRNAME_OUTPUT, index_filename)
+      File.write(full_path_to_index_html, Foresite::Renderer.render(full_path_to_wrapper_html, {
         content: index_content
       }))
 
-      puts "Created file #{path_to_index_html}"
+      puts "Created #{relative_path_to_index_html}"
     end
   end
 end

@@ -28,16 +28,22 @@ RSpec.describe Foresite::Cli do
         ENV["FORESITE_ROOT"] = tmpdir
 
         expected_stdout = ForesiteRSpec.cli_lines([
-          "Created directory #{tmpdir}/md",
-          "Created directory #{tmpdir}/out",
-          "Created file #{tmpdir}/template.rhtml"
+          "Created md/",
+          "Created out/",
+          "Created erb/",
+          "Created erb/post.md.erb",
+          "Created erb/wrapper.html.erb",
+          "Created erb/_list.html.erb"
         ])
 
         expect { Foresite::Cli.new.invoke(:init) }.to output(expected_stdout).to_stdout
 
         expect(Pathname.new("#{tmpdir}/md")).to be_directory
         expect(Pathname.new("#{tmpdir}/out")).to be_directory
-        expect(Pathname.new("#{tmpdir}/template.rhtml")).to be_file
+        expect(Pathname.new("#{tmpdir}/erb")).to be_directory
+        expect(Pathname.new("#{tmpdir}/erb/post.md.erb")).to be_file
+        expect(Pathname.new("#{tmpdir}/erb/wrapper.html.erb")).to be_file
+        expect(Pathname.new("#{tmpdir}/erb/_list.html.erb")).to be_file
 
         expect(Dir.new("#{tmpdir}/md").children).to eq([])
         expect(Dir.new("#{tmpdir}/out").children).to eq([])
@@ -49,9 +55,12 @@ RSpec.describe Foresite::Cli do
         ENV["FORESITE_ROOT"] = tmpdir
 
         expected_stdout = ForesiteRSpec.cli_lines([
-          "Directory #{tmpdir}/md already exists",
-          "Directory #{tmpdir}/out already exists",
-          "File #{tmpdir}/template.rhtml already exists"
+          "md/ already exists",
+          "out/ already exists",
+          "erb/ already exists",
+          "erb/post.md.erb already exists",
+          "erb/wrapper.html.erb already exists",
+          "erb/_list.html.erb already exists"
         ])
 
         # Invoke first time.
@@ -85,8 +94,9 @@ RSpec.describe Foresite::Cli do
 
         ymd = Time.now.strftime("%F")
 
-        expected_path_to_file = "#{tmpdir}/md/#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.md"
-        expected_stdout = ForesiteRSpec.cli_line("Created file #{expected_path_to_file}")
+        expected_full_path_to_file = "#{tmpdir}/md/#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.md"
+        expected_relative_path_to_file = "md/#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.md"
+        expected_stdout = ForesiteRSpec.cli_line("Created #{expected_relative_path_to_file}")
         expected_file_content = <<~EOF
           # Jackdaws Love my Big Sphinx of Quartz!
 
@@ -97,8 +107,8 @@ RSpec.describe Foresite::Cli do
         touch_args = ["Jackdaws Love my Big Sphinx of Quartz!"]
 
         expect { Foresite::Cli.new.invoke(:touch, touch_args) }.to output(expected_stdout).to_stdout
-        expect(Pathname.new(expected_path_to_file)).to be_file
-        expect(File.read(expected_path_to_file)).to eq(expected_file_content)
+        expect(Pathname.new(expected_full_path_to_file)).to be_file
+        expect(File.read(expected_full_path_to_file)).to eq(expected_file_content)
       end
     end
 
@@ -116,7 +126,8 @@ RSpec.describe Foresite::Cli do
         # First touch.
         Foresite::Cli.new.invoke(:touch, touch_args)
         # Mutate file to confirm contents don't change.
-        expected_path_to_file = "#{tmpdir}/md/#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.md"
+        expected_full_path_to_file = "#{tmpdir}/md/#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.md"
+        expected_relative_path_to_file = "md/#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.md"
         existing_file_content = <<~EOF
           # Jackdaws Love my Big Sphinx of Quartz!
 
@@ -125,12 +136,12 @@ RSpec.describe Foresite::Cli do
           Hear ye, hear ye.
 
         EOF
-        File.write(expected_path_to_file, existing_file_content)
+        File.write(expected_full_path_to_file, existing_file_content)
 
         # Second touch.
-        expected_stdout = ForesiteRSpec.cli_line("File #{expected_path_to_file} already exists")
+        expected_stdout = ForesiteRSpec.cli_line("File #{expected_relative_path_to_file} already exists")
         expect { Foresite::Cli.new.invoke(:touch, touch_args) }.to output(expected_stdout).to_stdout
-        expect(File.read(expected_path_to_file)).to eq(existing_file_content)
+        expect(File.read(expected_full_path_to_file)).to eq(existing_file_content)
       end
     end
   end
@@ -147,21 +158,24 @@ RSpec.describe Foresite::Cli do
 
         ymd = Time.now.strftime("%F")
 
-        expected_path_to_first_file = "#{tmpdir}/out/#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.html"
-        expected_path_to_second_file = "#{tmpdir}/out/#{ymd}-when-zombies-arrive-quickly-fax-judge-pat.html"
-        expected_path_to_index_file = "#{tmpdir}/out/index.html"
+        expected_full_path_to_first_file = "#{tmpdir}/out/#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.html"
+        expected_relative_path_to_first_file = "out/#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.html"
+        expected_full_path_to_second_file = "#{tmpdir}/out/#{ymd}-when-zombies-arrive-quickly-fax-judge-pat.html"
+        expected_relative_path_to_second_file = "out/#{ymd}-when-zombies-arrive-quickly-fax-judge-pat.html"
+        expected_full_path_to_index_file = "#{tmpdir}/out/index.html"
+        expected_relative_path_to_index_file = "out/index.html"
 
         expected_stdout = ForesiteRSpec.cli_lines([
-          "Created file #{expected_path_to_first_file}",
-          "Created file #{expected_path_to_second_file}",
-          "Created file #{expected_path_to_index_file}"
+          "Created #{expected_relative_path_to_first_file}",
+          "Created #{expected_relative_path_to_second_file}",
+          "Created #{expected_relative_path_to_index_file}"
         ])
 
         # Run build
         expect { Foresite::Cli.new.invoke(:build) }.to output(expected_stdout).to_stdout
         # HTML files should exist.
-        expect(Pathname.new(expected_path_to_first_file)).to be_file
-        expect(Pathname.new(expected_path_to_second_file)).to be_file
+        expect(Pathname.new(expected_full_path_to_first_file)).to be_file
+        expect(Pathname.new(expected_full_path_to_second_file)).to be_file
 
         expected_first_file_content = <<~EOF
           <h1 id="jackdaws-love-my-big-sphinx-of-quartz">Jackdaws Love my Big Sphinx of Quartz!</h1>
@@ -185,15 +199,15 @@ RSpec.describe Foresite::Cli do
         EOF
 
         # HTML file contents should contain generated markdown.
-        expect(File.read(expected_path_to_first_file)).to include(expected_first_file_content)
-        expect(File.read(expected_path_to_second_file)).to include(expected_second_file_content)
-        expect(File.read(expected_path_to_index_file)).to include(expected_index_file_content)
+        expect(File.read(expected_full_path_to_first_file)).to include(expected_first_file_content)
+        expect(File.read(expected_full_path_to_second_file)).to include(expected_second_file_content)
+        expect(File.read(expected_full_path_to_index_file)).to include(expected_index_file_content)
 
         # They should also use the top-level HTML template, we can just use a dummy string to confirm.
         expected_template_content = "<title>Another Foresite Blog</title>"
-        expect(File.read(expected_path_to_first_file)).to include(expected_template_content)
-        expect(File.read(expected_path_to_second_file)).to include(expected_template_content)
-        expect(File.read(expected_path_to_index_file)).to include(expected_template_content)
+        expect(File.read(expected_full_path_to_first_file)).to include(expected_template_content)
+        expect(File.read(expected_full_path_to_second_file)).to include(expected_template_content)
+        expect(File.read(expected_full_path_to_index_file)).to include(expected_template_content)
       end
     end
 
