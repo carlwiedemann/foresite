@@ -1,0 +1,7 @@
+<% if @links.count > 0 -%>
+<ul>
+<% @links.each do |link| -%>
+  <li><%= link[:date_ymd] %> <a href="<%= link[:href] %>"><%= link[:title] %></a></li>
+<% end -%>
+</ul>
+<% end -%>

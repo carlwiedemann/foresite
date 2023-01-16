@@ -158,8 +158,14 @@ RSpec.describe Foresite::Cli do
 
         ymd = Time.now.strftime("%F")
 
-        expected_full_path_to_first_file = "#{tmpdir}/out/#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.html"
-        expected_relative_path_to_first_file = "out/#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.html"
+        full_path_to_first_markdown_file = "#{tmpdir}/md/#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.md"
+        # Simulate the first file being written previously.
+        mutated_full_path_to_first_file = full_path_to_first_markdown_file.gsub(/\d{4}-\d{2}-\d{2}/, "2022-12-25")
+        File.write(mutated_full_path_to_first_file, File.read(full_path_to_first_markdown_file))
+        File.delete(full_path_to_first_markdown_file)
+        expected_full_path_to_first_file = "#{tmpdir}/out/2022-12-25-jackdaws-love-my-big-sphinx-of-quartz.html"
+        expected_relative_path_to_first_file = "out/2022-12-25-jackdaws-love-my-big-sphinx-of-quartz.html"
+
         expected_full_path_to_second_file = "#{tmpdir}/out/#{ymd}-when-zombies-arrive-quickly-fax-judge-pat.html"
         expected_relative_path_to_second_file = "out/#{ymd}-when-zombies-arrive-quickly-fax-judge-pat.html"
         expected_full_path_to_index_file = "#{tmpdir}/out/index.html"
@@ -193,8 +199,8 @@ RSpec.describe Foresite::Cli do
 
         expected_index_file_content = <<~EOF
           <ul>
-            <li>#{ymd} <a href="#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.html">Jackdaws Love my Big Sphinx of Quartz!</a></li>
             <li>#{ymd} <a href="#{ymd}-when-zombies-arrive-quickly-fax-judge-pat.html">When Zombies Arrive, Quickly Fax Judge Pat</a></li>
+            <li>2022-12-25 <a href="2022-12-25-jackdaws-love-my-big-sphinx-of-quartz.html">Jackdaws Love my Big Sphinx of Quartz!</a></li>
           </ul>
         EOF
 

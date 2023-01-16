@@ -1,4 +1,6 @@
-# Foresite - An Extremely Minimal Static Site Generator
+# Foresite
+
+An extremely minimal static site generator.
 
 CLI executable that converts markdown wrapped in a single template to static HTML for simple blogs hosted on [GitHub Pages](https://pages.github.com/) or similar.
 
@@ -14,9 +16,9 @@ The only requirement is Ruby >= 2.7.0.
 
     $ cd my_blog
 
-    $ foresite init                 # Initialize subdirectories for markdown and HTML
+    $ foresite init                 # Initialize
 
-    $ foresite touch "Hello World"  # Create first post as markdown
+    $ foresite touch "Hello World"  # Create markdown post titled "Hello World"
 
     $ foresite build                # Converts markdown to HTML
 
@@ -26,7 +28,7 @@ The only requirement is Ruby >= 2.7.0.
 
 ### 1. Create your project directory
 
-After installing foresite using `gem install foresite`, create a project directory for your site, and run `foresite init` from within it:
+Create a project directory for your site and run `foresite init` from within it:
 
     $ mkdir my_blog
 
@@ -40,17 +42,20 @@ After installing foresite using `gem install foresite`, create a project directo
     Created erb/wrapper.html.erb
     Created erb/_list.html.erb
 
-Three subdirectories are created
+Three subdirectories are created, along with three [ERB](https://docs.ruby-lang.org/en/3.2/ERB.html) template files.
 
 Some facts:
 
-* `md` subdirectory contains markdown files for editing. Each markdown file will be a separate post and *source of truth* for your site's content.
-* `out` subdirectory contains generated HTML files including an `index.html` file listing all posts.
-* `template.rhtml` file is a sole wrapper template using [Embedded Ruby (ERB)](https://docs.ruby-lang.org/en/3.2/ERB.html).
+* `md` subdirectory will contain markdown files known as posts, which are your site's content.
+* `out` subdirectory will contain HTML files generated from the markdown posts including an `index.html` file listing all posts.
+* `erb` subdirectory contains [ERB](https://docs.ruby-lang.org/en/3.2/ERB.html) templates you can modify:
+  * `post.md.erb` is the default markdown file for every post.
+  * `wrapper.html.erb` is a HTML wrapper template for every generated HTML file.
+  * `_list.html.erb` is a HTML template partial for the list of posts on the `index.html` page.
 
 ### 2. Write your first post
 
-Run `foresite touch` to generate a new markdown file in the `md` subdirectory. The post title is its sole argument:
+Run `foresite touch` to generate a new post in the `md` subdirectory. The title is its sole argument.
 
     $ foresite touch "Welcome to my site"
     Created md/2023-01-15-welcome-to-my-site.md
@@ -60,7 +65,7 @@ Run `foresite touch` to generate a new markdown file in the `md` subdirectory. T
     
     2023-01-15
 
-A single markdown file is created in the `md` subdirectory. **This file is for you to edit.**
+A single markdown file is created in the `md` subdirectory. **This file is meant for you to edit.**
 
 Some facts:
 
@@ -68,11 +73,13 @@ Some facts:
 * Current date in YYYY-MM-DD format is the first markdown paragraph (optional).
 * Current date and title are "slugified" for filename.
 
-### 3. Modify your wrapper template as desired
+### 3. Modify templates as desired
 
-The `template.rhtml` file wraps all of your markdown. **This file is for you to edit.**
+`post.md.erb` is used to when running `foresite touch` for the default markdown content. It has two variables, `@title` for the post title and `@date_ymd` for the created date in ISO 8601 `YYYY-MM-DD` format. Modify to have different defaults when running `foresite touch`.
 
-There is only one template variable, `@content`. For generated posts, `@content` is post markdown converted to HTML. For the `index.html` file, `@content` is a list of links to posts in reverse-chronological order.
+`wrapper.html.erb` wraps all of your markdown. Its sole variable `@content` will be a given post's HTML (converted from markdown). For the `index.html` file, `@content` will be an list of links to all posts in reverse-chronological order. Modify to have different overall page structure, or to add `<style>` etc.
+
+`_list.html.erb` is used to generate the `<ul>` list of posts on the `index.html` file. Modify to show posts in a different way.
 
 ### 4. Generate HTML from markdown
 
@@ -86,10 +93,10 @@ In this example, two HTML files are created.
 
 Some facts:
 
-* For every markdown file in the `md` subdirectory an equivalent HTML file is generated in the `out` subdirectory, where the parsed markdown is wrapped with wrapper template markup.
-* A single `index.html` file, which provides `@content` with an `<ul>` holding links to all posts, prefixed with post date.
-  * Titles are parsed from the first H1 tag in each markdown file.
-  * Dates are parsed from the filename.
+* For every post markdown file in the `md` subdirectory an equivalent HTML file is generated in the `out` subdirectory, each wrapped with wrapper template markup.
+* A single `index.html` file shows a list of links to all posts in reverse-chronological order, prefixed with post date.
+  * Post titles are parsed from the first H1 tag in each post markdown file.
+  * Post dates are parsed from the post markdown filename.
 * Re-running `foresite build` removes all files in the `out` subdirectory.
 
 In this example, the `index.html` will contain:
@@ -118,7 +125,7 @@ Bug reports and pull requests are welcome. The goals of Foresite are:
 
 * Extremely lightweight
 * Simple to use & understand
-* Light on features
+* Minimal features
 
 ## License
 

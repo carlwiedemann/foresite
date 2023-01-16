@@ -107,7 +107,10 @@ module Foresite
     LONGDESC
 
     def touch(title)
-      full_path_to_dir_md = File.join(Foresite.get_root_directory, Foresite::DIRNAME_MARKDOWN)
+      path_to_root_directory = Foresite.get_root_directory
+      full_path_to_dir_md = File.join(path_to_root_directory, Foresite::DIRNAME_MARKDOWN)
+      full_path_to_dir_erb = File.join(path_to_root_directory, Foresite::DIRNAME_ERB)
+      full_path_to_post_md = File.join(full_path_to_dir_erb, Foresite::FILENAME_POST_MD)
 
       unless Dir.exist?(full_path_to_dir_md)
         warn("No `#{Foresite::DIRNAME_MARKDOWN}` directory, did you run `foresite init` yet?")
@@ -116,17 +119,20 @@ module Foresite
 
       time_now = Time.now
 
-      ymd = time_now.strftime("%F")
+      date_ymd = time_now.strftime("%F")
       slug = title.downcase.gsub(/[^a-z]/i, " ").strip.gsub(/ +/, "-")
 
-      filename_md = "#{ymd}-#{slug}.md"
+      filename_md = "#{date_ymd}-#{slug}.md"
       full_path_to_file_md = File.join(full_path_to_dir_md, filename_md)
       relative_path_to_file_md = File.join(Foresite::DIRNAME_MARKDOWN, filename_md)
 
       if File.exist?(full_path_to_file_md)
         $stdout.puts("File #{relative_path_to_file_md} already exists")
       else
-        File.write(full_path_to_file_md, Foresite.default_markdown_content(title, ymd))
+        File.write(full_path_to_file_md, Foresite::Renderer.render(full_path_to_post_md, {
+          title: title,
+          date_ymd: date_ymd
+        }))
         $stdout.puts("Created #{relative_path_to_file_md}")
       end
     end
@@ -145,6 +151,7 @@ module Foresite
       full_path_to_dir_out = File.join(path_to_root_directory, Foresite::DIRNAME_OUTPUT)
       full_path_to_dir_erb = File.join(path_to_root_directory, Foresite::DIRNAME_ERB)
       full_path_to_wrapper_html = File.join(full_path_to_dir_erb, Foresite::FILENAME_WRAPPER_HTML)
+      full_path_to_list_html = File.join(full_path_to_dir_erb, Foresite::FILENAME_LIST_HTML)
 
       [full_path_to_dir_md, full_path_to_dir_out].any? do |path|
         unless Dir.exist?(path)
@@ -181,22 +188,13 @@ module Foresite
 
         title = markdown_content.split("\n").first { |line| /^# [a-z]/i =~ line }.gsub(/^#/, "").strip
 
-        links.push({
+        match_data = /\d{4}-\d{2}-\d{2}/.match(filename_markdown)
+
+        links.unshift({
+          date_ymd: (!match_data.nil?) ? match_data[0] : "",
           href: File.basename(full_path_to_file_html),
-          title: title,
-          date: /\d{4}-\d{2}-\d{2}/.match(filename_markdown)[0]
+          title: title
         })
-      end
-
-      if links.count > 0
-        # @todo Can we use erb for this instead?
-        inner_nav = links.map do |link|
-          "  <li>#{link[:date]} <a href=\"#{link[:href]}\">#{link[:title]}</a></li>\n"
-        end
-
-        index_content = "<ul>\n#{inner_nav.join}</ul>\n"
-      else
-        index_content = ""
       end
 
       # Generate index file.
@@ -204,7 +202,9 @@ module Foresite
       full_path_to_index_html = File.join(full_path_to_dir_out, index_filename)
       relative_path_to_index_html = File.join(Foresite::DIRNAME_OUTPUT, index_filename)
       File.write(full_path_to_index_html, Foresite::Renderer.render(full_path_to_wrapper_html, {
-        content: index_content
+        content: Foresite::Renderer.render(full_path_to_list_html, {
+          links: links
+        })
       }))
 
       puts "Created #{relative_path_to_index_html}"

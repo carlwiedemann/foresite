@@ -25,7 +25,7 @@ module Foresite
     # @return [String] Rendered template output.
     #
     def render
-      ::ERB.new(File.read(@path)).result(binding)
+      ::ERB.new(File.read(@path), trim_mode: "-").result(binding)
     end
 
     ##
