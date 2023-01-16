@@ -15,18 +15,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 TBD
 
-## [1.1.0] - 2023-01-15 
+## [1.1.1] - 2023-01-15
+
+### Fixed
+
+* Small typo in gemspec.
+
+## [1.1.0] - 2023-01-15
 
 ### Added
 
 * Can use templates for both post markdown and links list on index page.
- 
+
 ### Fixed
 
 * Reverse chronological order for posts on index page.
 * Fleshed-out README and fixed typos.
 
-## [1.0.1] - 2023-01-15 
+## [1.0.1] - 2023-01-15
 
 ### Changed
 
@@ -35,7 +41,7 @@ TBD
 ### Fixed
 
 * Bug with trailing non-alphanumeric characters in post titles.
- 
+
 ## [1.0.0] - 2023-01-14
 
 ### Added

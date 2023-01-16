@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.authors = ["Carl Wiedemann"]
   spec.email = ["carl.wiedemann@gmail.com"]
 
-  spec.summary = "A simple yet opinionated static site generator."
+  spec.summary = "An extremely minimal static site generator."
   spec.homepage = "https://github.com/carlwiedemann/foresite"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 2.7.0"
@@ -42,7 +42,4 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 3.2"
   spec.add_development_dependency "standard", "~> 1.3"
   spec.add_development_dependency "rake", "~> 13"
-
-  # For more information and examples about making a new gem, check out our
-  # guide at: https://bundler.io/guides/creating_gem.html
 end
