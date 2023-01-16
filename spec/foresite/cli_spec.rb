@@ -77,7 +77,7 @@ RSpec.describe Foresite::Cli do
       Dir.mktmpdir do |tmpdir|
         ENV["FORESITE_ROOT"] = tmpdir
 
-        exptected_stderr = ForesiteRSpec.cli_line("No `md` directory, did you run `foresite init` yet?")
+        exptected_stderr = ForesiteRSpec.cli_line("Missing subdirectories, try running `foresite init`")
         expected_exit_code = 1
 
         expect { Foresite::Cli.new.invoke(:touch, ["something"]) }.to output(exptected_stderr).to_stderr \
@@ -94,9 +94,8 @@ RSpec.describe Foresite::Cli do
 
         ymd = Time.now.strftime("%F")
 
-        expected_full_path_to_file = "#{tmpdir}/md/#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.md"
-        expected_relative_path_to_file = "md/#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.md"
-        expected_stdout = ForesiteRSpec.cli_line("Created #{expected_relative_path_to_file}")
+        expected_path = "#{tmpdir}/md/#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.md"
+        expected_stdout = ForesiteRSpec.cli_line("Created md/#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.md")
         expected_file_content = <<~EOF
           # Jackdaws Love my Big Sphinx of Quartz!
 
@@ -107,8 +106,8 @@ RSpec.describe Foresite::Cli do
         touch_args = ["Jackdaws Love my Big Sphinx of Quartz!"]
 
         expect { Foresite::Cli.new.invoke(:touch, touch_args) }.to output(expected_stdout).to_stdout
-        expect(Pathname.new(expected_full_path_to_file)).to be_file
-        expect(File.read(expected_full_path_to_file)).to eq(expected_file_content)
+        expect(Pathname.new(expected_path)).to be_file
+        expect(File.read(expected_path)).to eq(expected_file_content)
       end
     end
 
@@ -126,8 +125,7 @@ RSpec.describe Foresite::Cli do
         # First touch.
         Foresite::Cli.new.invoke(:touch, touch_args)
         # Mutate file to confirm contents don't change.
-        expected_full_path_to_file = "#{tmpdir}/md/#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.md"
-        expected_relative_path_to_file = "md/#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.md"
+        expected_path = "#{tmpdir}/md/#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.md"
         existing_file_content = <<~EOF
           # Jackdaws Love my Big Sphinx of Quartz!
 
@@ -136,12 +134,12 @@ RSpec.describe Foresite::Cli do
           Hear ye, hear ye.
 
         EOF
-        File.write(expected_full_path_to_file, existing_file_content)
+        File.write(expected_path, existing_file_content)
 
         # Second touch.
-        expected_stdout = ForesiteRSpec.cli_line("File #{expected_relative_path_to_file} already exists")
+        expected_stdout = ForesiteRSpec.cli_line("File md/#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.md already exists")
         expect { Foresite::Cli.new.invoke(:touch, touch_args) }.to output(expected_stdout).to_stdout
-        expect(File.read(expected_full_path_to_file)).to eq(existing_file_content)
+        expect(File.read(expected_path)).to eq(existing_file_content)
       end
     end
   end
@@ -158,46 +156,42 @@ RSpec.describe Foresite::Cli do
 
         ymd = Time.now.strftime("%F")
 
-        full_path_to_first_markdown_file = "#{tmpdir}/md/#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.md"
+        path_to_first = "#{tmpdir}/md/#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.md"
         # Simulate the first file being written previously.
-        mutated_full_path_to_first_file = full_path_to_first_markdown_file.gsub(/\d{4}-\d{2}-\d{2}/, "2022-12-25")
-        File.write(mutated_full_path_to_first_file, File.read(full_path_to_first_markdown_file))
-        File.delete(full_path_to_first_markdown_file)
-        expected_full_path_to_first_file = "#{tmpdir}/out/2022-12-25-jackdaws-love-my-big-sphinx-of-quartz.html"
-        expected_relative_path_to_first_file = "out/2022-12-25-jackdaws-love-my-big-sphinx-of-quartz.html"
+        File.write(path_to_first.gsub(/\d{4}-\d{2}-\d{2}/, "2022-12-25"), File.read(path_to_first))
+        File.delete(path_to_first)
 
-        expected_full_path_to_second_file = "#{tmpdir}/out/#{ymd}-when-zombies-arrive-quickly-fax-judge-pat.html"
-        expected_relative_path_to_second_file = "out/#{ymd}-when-zombies-arrive-quickly-fax-judge-pat.html"
-        expected_full_path_to_index_file = "#{tmpdir}/out/index.html"
-        expected_relative_path_to_index_file = "out/index.html"
+        expected_path_first = "#{tmpdir}/out/2022-12-25-jackdaws-love-my-big-sphinx-of-quartz.html"
+        expected_path_second = "#{tmpdir}/out/#{ymd}-when-zombies-arrive-quickly-fax-judge-pat.html"
+        expected_path_index = "#{tmpdir}/out/index.html"
 
         expected_stdout = ForesiteRSpec.cli_lines([
-          "Created #{expected_relative_path_to_first_file}",
-          "Created #{expected_relative_path_to_second_file}",
-          "Created #{expected_relative_path_to_index_file}"
+          "Created out/2022-12-25-jackdaws-love-my-big-sphinx-of-quartz.html",
+          "Created out/#{ymd}-when-zombies-arrive-quickly-fax-judge-pat.html",
+          "Created out/index.html"
         ])
 
         # Run build
         expect { Foresite::Cli.new.invoke(:build) }.to output(expected_stdout).to_stdout
         # HTML files should exist.
-        expect(Pathname.new(expected_full_path_to_first_file)).to be_file
-        expect(Pathname.new(expected_full_path_to_second_file)).to be_file
+        expect(Pathname.new(expected_path_first)).to be_file
+        expect(Pathname.new(expected_path_second)).to be_file
 
-        expected_first_file_content = <<~EOF
+        expected_content_first = <<~EOF
           <h1 id="jackdaws-love-my-big-sphinx-of-quartz">Jackdaws Love my Big Sphinx of Quartz!</h1>
 
           <p>#{ymd}</p>
 
         EOF
 
-        expected_second_file_content = <<~EOF
+        expected_content_second = <<~EOF
           <h1 id="when-zombies-arrive-quickly-fax-judge-pat">When Zombies Arrive, Quickly Fax Judge Pat</h1>
 
           <p>#{ymd}</p>
 
         EOF
 
-        expected_index_file_content = <<~EOF
+        expected_content_index = <<~EOF
           <ul>
             <li>#{ymd} <a href="#{ymd}-when-zombies-arrive-quickly-fax-judge-pat.html">When Zombies Arrive, Quickly Fax Judge Pat</a></li>
             <li>2022-12-25 <a href="2022-12-25-jackdaws-love-my-big-sphinx-of-quartz.html">Jackdaws Love my Big Sphinx of Quartz!</a></li>
@@ -205,15 +199,15 @@ RSpec.describe Foresite::Cli do
         EOF
 
         # HTML file contents should contain generated markdown.
-        expect(File.read(expected_full_path_to_first_file)).to include(expected_first_file_content)
-        expect(File.read(expected_full_path_to_second_file)).to include(expected_second_file_content)
-        expect(File.read(expected_full_path_to_index_file)).to include(expected_index_file_content)
+        expect(File.read(expected_path_first)).to include(expected_content_first)
+        expect(File.read(expected_path_second)).to include(expected_content_second)
+        expect(File.read(expected_path_index)).to include(expected_content_index)
 
         # They should also use the top-level HTML template, we can just use a dummy string to confirm.
         expected_template_content = "<title>Another Foresite Blog</title>"
-        expect(File.read(expected_full_path_to_first_file)).to include(expected_template_content)
-        expect(File.read(expected_full_path_to_second_file)).to include(expected_template_content)
-        expect(File.read(expected_full_path_to_index_file)).to include(expected_template_content)
+        expect(File.read(expected_path_first)).to include(expected_template_content)
+        expect(File.read(expected_path_second)).to include(expected_template_content)
+        expect(File.read(expected_path_index)).to include(expected_template_content)
       end
     end
 
@@ -221,7 +215,7 @@ RSpec.describe Foresite::Cli do
       Dir.mktmpdir do |tmpdir|
         ENV["FORESITE_ROOT"] = tmpdir
 
-        exptected_stderr = ForesiteRSpec.cli_line("No `md` directory or `out` directory, did you run `foresite init` yet?")
+        exptected_stderr = ForesiteRSpec.cli_line("Missing subdirectories, try running `foresite init`")
         expected_exit_code = 1
 
         expect { Foresite::Cli.new.invoke(:build) }.to output(exptected_stderr).to_stderr \
@@ -236,7 +230,7 @@ RSpec.describe Foresite::Cli do
         # Initialize, but don't touch any files.
         Foresite::Cli.new.invoke(:init)
 
-        exptected_stderr = ForesiteRSpec.cli_line("No `.md` files, try running `foresite touch`")
+        exptected_stderr = ForesiteRSpec.cli_line("No markdown files, try running `foresite touch`")
         expected_exit_code = 1
 
         expect { Foresite::Cli.new.invoke(:build) }.to output(exptected_stderr).to_stderr \
