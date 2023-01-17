@@ -62,7 +62,7 @@ module Foresite
       if File.exist?(path)
         $stdout.puts("File #{Foresite.relative_path(path)} already exists")
       else
-        File.write(path, Foresite.render_post(title,date_ymd))
+        File.write(path, Foresite.render_post(title, date_ymd))
         $stdout.puts("Created #{Foresite.relative_path(path)}")
       end
     end
