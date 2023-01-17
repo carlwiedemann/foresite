@@ -123,6 +123,8 @@ Bug reports and pull requests are welcome. The goals of Foresite are:
 * Simple to use & understand
 * Minimal features
 
+Read more in the [blog post introducing Foresite](https://carlwiedemann.github.io/post/2023-01-17-introducing-foresite.html)
+
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
