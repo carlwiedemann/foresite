@@ -10,7 +10,7 @@ loader.setup
 
 module Foresite
   DIRNAME_MARKDOWN = "md"
-  DIRNAME_OUTPUT = "out"
+  DIRNAME_POST = "post"
   DIRNAME_ERB = "erb"
 
   FILENAME_POST_MD = "post.md.erb"
@@ -21,16 +21,16 @@ module Foresite
 
   PATH_TO_DEFAULTS = File.join(__dir__, "skeleton")
 
-  def self.get_path_to_root_directory
+  def self.get_path_to_root
     ENV[ENV_ROOT] || Dir.pwd
   end
 
   def self.root_exists?
-    Dir.exist?(get_path_to_root_directory)
+    Dir.exist?(get_path_to_root)
   end
 
   def self.root_writable?
-    File.writable?(get_path_to_root_directory)
+    File.writable?(get_path_to_root)
   end
 
   def self.subdirectories_exist?
@@ -40,15 +40,15 @@ module Foresite
   end
 
   def self.get_path_to_md
-    File.join(get_path_to_root_directory, DIRNAME_MARKDOWN)
+    File.join(get_path_to_root, DIRNAME_MARKDOWN)
   end
 
   def self.get_path_to_out
-    File.join(get_path_to_root_directory, DIRNAME_OUTPUT)
+    File.join(get_path_to_root, DIRNAME_POST)
   end
 
   def self.get_path_to_erb
-    File.join(get_path_to_root_directory, DIRNAME_ERB)
+    File.join(get_path_to_root, DIRNAME_ERB)
   end
 
   def self.get_path_to_erb_file(file)
@@ -63,8 +63,12 @@ module Foresite
     File.join(get_path_to_out, file)
   end
 
+  def self.get_path_to_index_file
+    File.join(get_path_to_root, "index.html")
+  end
+
   def self.relative_path(full_path)
-    full_path.gsub(get_path_to_root_directory, "").gsub(Regexp.new("^#{File::SEPARATOR}"), "")
+    full_path.gsub(get_path_to_root, "").gsub(Regexp.new("^#{File::SEPARATOR}"), "")
   end
 
   def self.render_erb_file(file, vars)

@@ -29,7 +29,7 @@ RSpec.describe Foresite::Cli do
 
         expected_stdout = ForesiteRSpec.cli_lines([
           "Created md/",
-          "Created out/",
+          "Created post/",
           "Created erb/",
           "Created erb/post.md.erb",
           "Created erb/wrapper.html.erb",
@@ -39,14 +39,14 @@ RSpec.describe Foresite::Cli do
         expect { Foresite::Cli.new.invoke(:init) }.to output(expected_stdout).to_stdout
 
         expect(Pathname.new("#{tmpdir}/md")).to be_directory
-        expect(Pathname.new("#{tmpdir}/out")).to be_directory
+        expect(Pathname.new("#{tmpdir}/post")).to be_directory
         expect(Pathname.new("#{tmpdir}/erb")).to be_directory
         expect(Pathname.new("#{tmpdir}/erb/post.md.erb")).to be_file
         expect(Pathname.new("#{tmpdir}/erb/wrapper.html.erb")).to be_file
         expect(Pathname.new("#{tmpdir}/erb/_list.html.erb")).to be_file
 
         expect(Dir.new("#{tmpdir}/md").children).to eq([])
-        expect(Dir.new("#{tmpdir}/out").children).to eq([])
+        expect(Dir.new("#{tmpdir}/post").children).to eq([])
       end
     end
 
@@ -56,7 +56,7 @@ RSpec.describe Foresite::Cli do
 
         expected_stdout = ForesiteRSpec.cli_lines([
           "md/ already exists",
-          "out/ already exists",
+          "post/ already exists",
           "erb/ already exists",
           "erb/post.md.erb already exists",
           "erb/wrapper.html.erb already exists",
@@ -161,14 +161,14 @@ RSpec.describe Foresite::Cli do
         File.write(path_to_first.gsub(/\d{4}-\d{2}-\d{2}/, "2022-12-25"), File.read(path_to_first))
         File.delete(path_to_first)
 
-        expected_path_first = "#{tmpdir}/out/2022-12-25-jackdaws-love-my-big-sphinx-of-quartz.html"
-        expected_path_second = "#{tmpdir}/out/#{ymd}-when-zombies-arrive-quickly-fax-judge-pat.html"
-        expected_path_index = "#{tmpdir}/out/index.html"
+        expected_path_first = "#{tmpdir}/post/2022-12-25-jackdaws-love-my-big-sphinx-of-quartz.html"
+        expected_path_second = "#{tmpdir}/post/#{ymd}-when-zombies-arrive-quickly-fax-judge-pat.html"
+        expected_path_index = "#{tmpdir}/index.html"
 
         expected_stdout = ForesiteRSpec.cli_lines([
-          "Created out/2022-12-25-jackdaws-love-my-big-sphinx-of-quartz.html",
-          "Created out/#{ymd}-when-zombies-arrive-quickly-fax-judge-pat.html",
-          "Created out/index.html"
+          "Created post/2022-12-25-jackdaws-love-my-big-sphinx-of-quartz.html",
+          "Created post/#{ymd}-when-zombies-arrive-quickly-fax-judge-pat.html",
+          "Created index.html"
         ])
 
         # Run build
@@ -193,8 +193,8 @@ RSpec.describe Foresite::Cli do
 
         expected_content_index = <<~EOF
           <ul>
-            <li>#{ymd} <a href="#{ymd}-when-zombies-arrive-quickly-fax-judge-pat.html">When Zombies Arrive, Quickly Fax Judge Pat</a></li>
-            <li>2022-12-25 <a href="2022-12-25-jackdaws-love-my-big-sphinx-of-quartz.html">Jackdaws Love my Big Sphinx of Quartz!</a></li>
+            <li>#{ymd} <a href="post/#{ymd}-when-zombies-arrive-quickly-fax-judge-pat.html">When Zombies Arrive, Quickly Fax Judge Pat</a></li>
+            <li>2022-12-25 <a href="post/2022-12-25-jackdaws-love-my-big-sphinx-of-quartz.html">Jackdaws Love my Big Sphinx of Quartz!</a></li>
           </ul>
         EOF
 

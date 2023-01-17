@@ -15,6 +15,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 TBD
 
+## [1.1.3] - 2023-01-16
+
+### Fixed
+
+* Use the top-level directory for the index.html file because you can't set subdirectories for github pages.
+
 ## [1.1.2] - 2023-01-16
 
 ### Fixed

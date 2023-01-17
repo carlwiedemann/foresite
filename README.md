@@ -36,7 +36,7 @@ Create a project directory for your site and run `foresite init` from within it:
 
     $ foresite init
     Created md/
-    Created out/
+    Created post/
     Created erb/
     Created erb/post.md.erb
     Created erb/wrapper.html.erb
@@ -47,7 +47,7 @@ Three subdirectories are created, along with three [ERB](https://docs.ruby-lang.
 Some facts:
 
 * `md` subdirectory will contain markdown files known as posts, which are your site's content.
-* `out` subdirectory will contain HTML files generated from the markdown posts including an `index.html` file listing all posts.
+* `post` subdirectory will contain HTML files generated from the markdown posts with the exception of an `index.html` file listing all posts, which will exist in the top-level project directory.
 * `erb` subdirectory contains [ERB](https://docs.ruby-lang.org/en/3.2/ERB.html) templates you can modify:
   * `post.md.erb` is the default markdown file for every post.
   * `wrapper.html.erb` is a HTML wrapper template for every generated HTML file.
@@ -83,21 +83,21 @@ Some facts:
 
 ### 4. Generate HTML from markdown
 
-Run `foresite build` to create HTML in the `out` subdirectory:
+Run `foresite build` to create HTML in the `post` subdirectory and the `index.html` file:
 
     $ foresite build
-    Created out/2023-01-15-welcome-to-my-site.html
-    Created out/index.html
+    Created post/2023-01-15-welcome-to-my-site.html
+    Created index.html
 
 In this example, two HTML files are created.
 
 Some facts:
 
-* For every post markdown file in the `md` subdirectory an equivalent HTML file is generated in the `out` subdirectory, each wrapped with wrapper template markup.
+* For every post markdown file in the `md` subdirectory an equivalent HTML file is generated in the `post` subdirectory, each wrapped with wrapper template markup.
 * A single `index.html` file shows a list of links to all posts in reverse-chronological order, prefixed with post date.
   * Post titles are parsed from the first H1 tag in each post markdown file.
   * Post dates are parsed from the post markdown filename.
-* Re-running `foresite build` removes all files in the `out` subdirectory.
+* Re-running `foresite build` removes and recreates all HTML files in the `post` subdirectory as well as the `index.html` file.
 
 In this example, the `index.html` will contain:
 
@@ -106,10 +106,6 @@ In this example, the `index.html` will contain:
   <li>2023-01-15 <a href="2023-01-15-welcome-to-my-site.html">Welcome to my site</a></li>
 </ul>
 ```
-
-## Use GitHub Pages to host your content
-
-You'll want to use the `out` subdirectory as its publishing source, see [Configuring a publishing source for your GitHub Pages site](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site). 
 
 ## Development
 

@@ -16,19 +16,19 @@ module Foresite
     long_desc <<-LONGDESC
       Initializes foresite in the current directory.
 
-      Creates `#{Foresite::DIRNAME_MARKDOWN}/` for storing editable markdown posts, `#{Foresite::DIRNAME_OUTPUT}/` for storing generated HTML, and `#{Foresite::DIRNAME_ERB}` for storing editable template.
+      Creates `#{Foresite::DIRNAME_MARKDOWN}/` for storing editable markdown posts, `#{Foresite::DIRNAME_POST}/` for storing generated HTML, and `#{Foresite::DIRNAME_ERB}` for storing editable template.
 
       Does not overwrite existing subdirectories.
     LONGDESC
 
     def init
       unless Foresite.root_exists?
-        warn("Nonexistent directory #{Foresite.get_path_to_root_directory}")
+        warn("Nonexistent directory #{Foresite.get_path_to_root}")
         exit(1)
       end
 
       unless Foresite.root_writable?
-        warn("Cannot write to directory #{Foresite.get_path_to_root_directory}")
+        warn("Cannot write to directory #{Foresite.get_path_to_root}")
         exit(1)
       end
 
@@ -67,9 +67,9 @@ module Foresite
       end
     end
 
-    desc "build", "Generates HTML from markdown into `#{Foresite::DIRNAME_OUTPUT}` directory"
+    desc "build", "Generates HTML from markdown into `#{Foresite::DIRNAME_POST}` directory"
     long_desc <<-LONGDESC
-      Creates HTML files from all markdown posts and writes them to the `#{Foresite::DIRNAME_OUTPUT}` directory.
+      Creates HTML files from all markdown posts and writes them to the `#{Foresite::DIRNAME_POST}` directory.
 
       The names of the HTML files match corresponding markdown files with extension `.html` instead of `.md`.
     LONGDESC
@@ -82,6 +82,7 @@ module Foresite
 
       # Wipe all output files.
       Dir.glob(File.join(Foresite.get_path_to_out, "*.html")).each { File.delete(_1) }
+      File.delete(Foresite.get_path_to_index_file) if File.exist?(Foresite.get_path_to_index_file)
 
       markdown_paths = Dir.glob(File.join(Foresite.get_path_to_md, "*.md"))
 
@@ -104,13 +105,13 @@ module Foresite
 
         {
           date_ymd: match_data.nil? ? "" : match_data[0],
-          href: File.basename(html_path),
+          href: Foresite.relative_path(html_path),
           title: markdown_content.split("\n").first { |line| /^# [a-z]/i =~ line }.gsub(/^#/, "").strip
         }
       end
 
       # Generate index file.
-      index_html_path = Foresite.get_path_to_out_file("index.html")
+      index_html_path = Foresite.get_path_to_index_file
       File.write(index_html_path, Foresite.render_wrapped_index(links))
 
       $stdout.puts("Created #{Foresite.relative_path(index_html_path)}")
