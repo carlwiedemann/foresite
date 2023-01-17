@@ -13,6 +13,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+TBD
+
+## [1.1.2] - 2023-01-16
+
 ### Fixed
 
 * DRYing things up. 
