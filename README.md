@@ -103,7 +103,7 @@ In this example, the `index.html` will contain:
 
 ```html
 <ul>
-  <li>2023-01-15 <a href="2023-01-15-welcome-to-my-site.html">Welcome to my site</a></li>
+  <li>2023-01-15 <a href="post/2023-01-15-welcome-to-my-site.html">Welcome to my site</a></li>
 </ul>
 ```
 

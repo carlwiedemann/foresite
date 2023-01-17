@@ -13,7 +13,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
-TBD
+### Fixed
+
+* Typo in README.
 
 ## [1.1.3] - 2023-01-16
 
