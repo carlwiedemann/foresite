@@ -19,7 +19,7 @@ TBD
 
 ### Added
 
-[#1](https://github.com/carlwiedemann/foresite/issues/1) Dynamic `<title>` tag based on post title
+[#2](https://github.com/carlwiedemann/foresite/pull/2) Dynamic `<title>` tag based on post title
 
 ### Fixed
 
