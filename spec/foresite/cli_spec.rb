@@ -205,8 +205,8 @@ RSpec.describe Foresite::Cli do
 
         # They should also use the top-level HTML template, we can just use a dummy string to confirm.
         expected_title_index = "<title>Another Foresite Blog</title>"
-        expected_title_first = "<title>Jackdaws Love my Big Sphinx of Quartz!</title>"
-        expected_title_second = "<title>When Zombies Arrive, Quickly Fax Judge Pat</title>"
+        expected_title_first = "<title>Jackdaws Love my Big Sphinx of Quartz! - Another Foresite Blog</title>"
+        expected_title_second = "<title>When Zombies Arrive, Quickly Fax Judge Pat - Another Foresite Blog</title>"
         expect(File.read(expected_path_first)).to include(expected_title_first)
         expect(File.read(expected_path_second)).to include(expected_title_second)
         expect(File.read(expected_path_index)).to include(expected_title_index)

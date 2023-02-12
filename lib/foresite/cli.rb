@@ -93,11 +93,12 @@ module Foresite
 
       links = markdown_paths.map do |markdown_path|
         markdown_content = File.read(markdown_path)
+        title = markdown_content.split("\n").first { |line| /^# [a-z]/i =~ line }.gsub(/^#/, "").strip
 
         filename_markdown = File.basename(markdown_path)
         html_path = Foresite.get_path_to_out_file(filename_markdown.gsub(/\.md$/, ".html"))
 
-        File.write(html_path, Foresite.render_wrapped(markdown_content))
+        File.write(html_path, Foresite.render_wrapped(title, markdown_content))
         $stdout.puts("Created #{Foresite.relative_path(html_path)}")
 
         # Extract date if it exists.
@@ -106,7 +107,7 @@ module Foresite
         {
           date_ymd: match_data.nil? ? "" : match_data[0],
           href: Foresite.relative_path(html_path),
-          title: markdown_content.split("\n").first { |line| /^# [a-z]/i =~ line }.gsub(/^#/, "").strip
+          title: title
         }
       end
 
