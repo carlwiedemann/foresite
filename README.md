@@ -77,7 +77,7 @@ Some facts:
 
 `post.md.erb` is used to when running `foresite touch` for the default markdown content. It has two variables, `@title` for the post title and `@date_ymd` for the created date in ISO 8601 `YYYY-MM-DD` format. Modify to have different defaults when running `foresite touch`.
 
-`wrapper.html.erb` wraps all of your markdown. Its sole variable `@content` will be a given post's HTML (converted from markdown). For the `index.html` file, `@content` will be an list of links to all posts in reverse-chronological order. Modify to have different overall page structure, or to add `<style>` etc.
+`wrapper.html.erb` wraps all of your markdown. It has two variables, `@title` for the post title that will populate the `<title>` tag, and `@content` for a given post's HTML (converted from markdown). For the `index.html` file, `@title` will be `nil`, and `@content` will be an list of links to all posts in reverse-chronological order. Modify to have different overall page structure, or to add `<style>` etc.
 
 `_list.html.erb` is used to generate the `<ul>` list of posts on the `index.html` file. Modify to show posts in a different way.
 

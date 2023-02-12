@@ -13,6 +13,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+TBD
+
+## [1.2.0] - 2023-02-11
+
+### Added
+
+[#1](https://github.com/carlwiedemann/foresite/issues/1) Dynamic `<title>` tag based on post title
+
 ### Fixed
 
 * Typo in README.
