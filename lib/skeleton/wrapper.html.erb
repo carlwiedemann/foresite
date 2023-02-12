@@ -1,8 +1,11 @@
+<%
+  index_title = 'Another Foresite Blog'
+-%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Another Foresite Blog</title>
+  <title><%= @title ? "#{@title} - #{index_title}" : index_title %></title>
   <style></style>
 </head>
 <body>

@@ -82,8 +82,9 @@ module Foresite
     })
   end
 
-  def self.render_wrapped(markdown_content)
+  def self.render_wrapped(title, markdown_content)
     render_erb_file(FILENAME_WRAPPER_HTML, {
+      title: title,
       content: ::Kramdown::Document.new(markdown_content).to_html
     })
   end
