@@ -135,7 +135,7 @@ module Foresite
         Foresite::DIRNAME_ERB
       ]
 
-      $stdout.puts("Watching #{dirs_to_watch.map { "./#{_1}" }.join(', ')} for changes... (Ctrl+C to exit)")
+      $stdout.puts("Watching #{dirs_to_watch.map { "./#{_1}" }.join(", ")} for changes... (Ctrl+C to exit)")
 
       Filewatcher.new(dirs_to_watch).watch do |changes|
         changes.each do |filename, event|
@@ -144,7 +144,6 @@ module Foresite
 
         build
       end
-
     end
   end
 end
