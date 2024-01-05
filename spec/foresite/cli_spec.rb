@@ -9,7 +9,7 @@ RSpec.describe Foresite::Cli do
       expected_stderr = ForesiteRSpec.cli_line("Nonexistent directory foo")
       expected_exit_code = 1
 
-      expect { Foresite::Cli.new.invoke(:init) }.to output(expected_stderr).to_stderr \
+      expect { Foresite::Cli.new.invoke(:init) }.to output(expected_stderr).to_stderr
         .and(raise_error(SystemExit) { |error| expect(error.status).to eq(expected_exit_code) })
     end
 
@@ -19,7 +19,7 @@ RSpec.describe Foresite::Cli do
       expected_stderr = ForesiteRSpec.cli_line("Cannot write to directory /usr")
       expected_exit_code = 1
 
-      expect { Foresite::Cli.new.invoke(:init) }.to output(expected_stderr).to_stderr \
+      expect { Foresite::Cli.new.invoke(:init) }.to output(expected_stderr).to_stderr
         .and(raise_error(SystemExit) { |error| expect(error.status).to eq(expected_exit_code) })
     end
 
@@ -80,7 +80,7 @@ RSpec.describe Foresite::Cli do
         exptected_stderr = ForesiteRSpec.cli_line("Missing subdirectories, try running `foresite init`")
         expected_exit_code = 1
 
-        expect { Foresite::Cli.new.invoke(:touch, ["something"]) }.to output(exptected_stderr).to_stderr \
+        expect { Foresite::Cli.new.invoke(:touch, ["something"]) }.to output(exptected_stderr).to_stderr
           .and(raise_error(SystemExit) { |error| expect(error.status).to eq(expected_exit_code) })
       end
     end
@@ -220,7 +220,7 @@ RSpec.describe Foresite::Cli do
         exptected_stderr = ForesiteRSpec.cli_line("Missing subdirectories, try running `foresite init`")
         expected_exit_code = 1
 
-        expect { Foresite::Cli.new.invoke(:build) }.to output(exptected_stderr).to_stderr \
+        expect { Foresite::Cli.new.invoke(:build) }.to output(exptected_stderr).to_stderr
           .and(raise_error(SystemExit) { |error| expect(error.status).to eq(expected_exit_code) })
       end
     end
@@ -235,7 +235,7 @@ RSpec.describe Foresite::Cli do
         exptected_stderr = ForesiteRSpec.cli_line("No markdown files, try running `foresite touch`")
         expected_exit_code = 1
 
-        expect { Foresite::Cli.new.invoke(:build) }.to output(exptected_stderr).to_stderr \
+        expect { Foresite::Cli.new.invoke(:build) }.to output(exptected_stderr).to_stderr
           .and(raise_error(SystemExit) { |error| expect(error.status).to eq(expected_exit_code) })
       end
     end
