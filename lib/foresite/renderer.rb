@@ -14,7 +14,7 @@ module Foresite
       @path = path
       vars.each do |k, v|
         if k.is_a?(Symbol)
-          instance_variable_set("@#{k}", v)
+          instance_variable_set(:"@#{k}", v)
         end
       end
     end
