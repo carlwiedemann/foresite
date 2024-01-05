@@ -107,6 +107,10 @@ In this example, the `index.html` will contain:
 </ul>
 ```
 
+### 5. Watch files and build automatically
+
+Run `foresite watch` to detect changes to markdown or ERB files, build will run automatically. Useful for previewing content locally.
+
 ## Development
 
 1. Clone
