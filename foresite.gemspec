@@ -38,6 +38,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "kramdown", "~> 2.4"
   spec.add_dependency "thor", "~> 1.2"
   spec.add_dependency "zeitwerk", "~> 2.6"
+  spec.add_dependency "filewatcher", "~> 2.1"
 
   spec.add_development_dependency "rspec", "~> 3.2"
   spec.add_development_dependency "standard", "~> 1.3"

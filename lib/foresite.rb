@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 require "erb"
-require "thor"
+require "filewatcher"
 require "kramdown"
+require "thor"
 require "zeitwerk"
 
 loader = Zeitwerk::Loader.for_gem

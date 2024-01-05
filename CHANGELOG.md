@@ -13,7 +13,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
-TBD
+## [1.3.0] - 2024-01-05
+
+### Added
+
+[#3](https://github.com/carlwiedemann/foresite/pull/3) version & watch commands (not sure how to test these best right now).
 
 ## [1.2.0] - 2023-02-11
 

@@ -12,6 +12,11 @@ module Foresite
       true
     end
 
+    desc "version", "Displays version"
+    def version
+      $stdout.puts(Foresite::VERSION)
+    end
+
     desc "init", "Initializes foresite in current directory"
     long_desc <<-LONGDESC
       Initializes foresite in the current directory.
@@ -116,6 +121,30 @@ module Foresite
       File.write(index_html_path, Foresite.render_wrapped_index(links))
 
       $stdout.puts("Created #{Foresite.relative_path(index_html_path)}")
+    end
+
+    desc "watch", "Watches markdown and templates files and runs `build` when they change"
+    long_desc <<-LONGDESC
+      See `build` help for more information
+    LONGDESC
+
+    # @todo How might we test this?
+    def watch
+      dirs_to_watch = [
+        Foresite::DIRNAME_MARKDOWN,
+        Foresite::DIRNAME_ERB
+      ]
+
+      $stdout.puts("Watching #{dirs_to_watch.map { "./#{_1}" }.join(', ')} for changes... (Ctrl+C to exit)")
+
+      Filewatcher.new(dirs_to_watch).watch do |changes|
+        changes.each do |filename, event|
+          $stdout.puts("#{File.basename(filename)} #{event}")
+        end
+
+        build
+      end
+
     end
   end
 end
