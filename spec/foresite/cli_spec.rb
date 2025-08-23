@@ -33,7 +33,8 @@ RSpec.describe Foresite::Cli do
           "Created erb/",
           "Created erb/post.md.erb",
           "Created erb/wrapper.html.erb",
-          "Created erb/_list.html.erb"
+          "Created erb/_list.html.erb",
+          "Created erb/feed.xml.erb"
         ])
 
         expect { Foresite::Cli.new.invoke(:init) }.to output(expected_stdout).to_stdout
@@ -60,7 +61,8 @@ RSpec.describe Foresite::Cli do
           "erb/ already exists",
           "erb/post.md.erb already exists",
           "erb/wrapper.html.erb already exists",
-          "erb/_list.html.erb already exists"
+          "erb/_list.html.erb already exists",
+          "erb/feed.xml.erb already exists"
         ])
 
         # Invoke first time.
@@ -154,7 +156,9 @@ RSpec.describe Foresite::Cli do
         Foresite::Cli.new.invoke(:touch, ["Jackdaws Love my Big Sphinx of Quartz!"])
         Foresite::Cli.new.invoke(:touch, ["When Zombies Arrive, Quickly Fax Judge Pat"])
 
-        ymd = Time.now.strftime("%F")
+        now = Time.now
+        ymd = now.strftime("%F")
+        rfc822 = now.strftime("%a, %d %b %Y 00:00:00 +0000")
 
         path_to_first = "#{tmpdir}/md/#{ymd}-jackdaws-love-my-big-sphinx-of-quartz.md"
         # Simulate the first file being written previously.
@@ -164,11 +168,13 @@ RSpec.describe Foresite::Cli do
         expected_path_first = "#{tmpdir}/post/2022-12-25-jackdaws-love-my-big-sphinx-of-quartz.html"
         expected_path_second = "#{tmpdir}/post/#{ymd}-when-zombies-arrive-quickly-fax-judge-pat.html"
         expected_path_index = "#{tmpdir}/index.html"
+        expected_path_feed = "#{tmpdir}/feed.xml"
 
         expected_stdout = ForesiteRSpec.cli_lines([
           "Created post/2022-12-25-jackdaws-love-my-big-sphinx-of-quartz.html",
           "Created post/#{ymd}-when-zombies-arrive-quickly-fax-judge-pat.html",
-          "Created index.html"
+          "Created index.html",
+          "Created feed.xml"
         ])
 
         # Run build
@@ -198,10 +204,26 @@ RSpec.describe Foresite::Cli do
           </ul>
         EOF
 
+        expected_content_feed = <<~EOF
+          <item>
+            <title>When Zombies Arrive, Quickly Fax Judge Pat</title>
+            <link>https://example.com/post/#{ymd}-when-zombies-arrive-quickly-fax-judge-pat.html</link>
+            <guid>https://example.com/post/#{ymd}-when-zombies-arrive-quickly-fax-judge-pat.html</guid>
+            <pubDate>#{rfc822}</pubDate>
+          </item>
+          <item>
+            <title>Jackdaws Love my Big Sphinx of Quartz!</title>
+            <link>https://example.com/post/2022-12-25-jackdaws-love-my-big-sphinx-of-quartz.html</link>
+            <guid>https://example.com/post/2022-12-25-jackdaws-love-my-big-sphinx-of-quartz.html</guid>
+            <pubDate>Sun, 25 Dec 2022 00:00:00 +0000</pubDate>
+          </item>
+        EOF
+
         # HTML file contents should contain generated markdown.
         expect(File.read(expected_path_first)).to include(expected_content_first)
         expect(File.read(expected_path_second)).to include(expected_content_second)
         expect(File.read(expected_path_index)).to include(expected_content_index)
+        expect(File.read(expected_path_feed)).to include(expected_content_feed)
 
         # They should also use the top-level HTML template, we can just use a dummy string to confirm.
         expected_title_index = "<title>Another Foresite Blog</title>"
@@ -210,6 +232,7 @@ RSpec.describe Foresite::Cli do
         expect(File.read(expected_path_first)).to include(expected_title_first)
         expect(File.read(expected_path_second)).to include(expected_title_second)
         expect(File.read(expected_path_index)).to include(expected_title_index)
+        expect(File.read(expected_path_feed)).to include(expected_title_index)
       end
     end
 
