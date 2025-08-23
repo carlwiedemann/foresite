@@ -12,6 +12,7 @@ module Foresite
     # @param [Hash] vars Variables for template.
     def initialize(path, vars)
       @path = path
+      @vars_original = @vars
       vars.each do |k, v|
         if k.is_a?(Symbol)
           instance_variable_set(:"@#{k}", v)

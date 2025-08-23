@@ -88,6 +88,7 @@ module Foresite
       # Wipe all output files.
       Dir.glob(File.join(Foresite.get_path_to_out, "*.html")).each { File.delete(_1) }
       File.delete(Foresite.get_path_to_index_file) if File.exist?(Foresite.get_path_to_index_file)
+      File.delete(Foresite.get_path_to_feed_file) if File.exist?(Foresite.get_path_to_feed_file)
 
       markdown_paths = Dir.glob(File.join(Foresite.get_path_to_md, "*.md"))
 
@@ -106,11 +107,14 @@ module Foresite
         File.write(html_path, Foresite.render_wrapped(title, markdown_content))
         $stdout.puts("Created #{Foresite.relative_path(html_path)}")
 
-        # Extract date if it exists.
+        # Extract date.
         match_data = /\d{4}-\d{2}-\d{2}/.match(filename_markdown)
+        date_ymd = match_data[0]
+        date_822 = DateTime.strptime(date_ymd, "%F").strftime("%a, %d %b %Y %H:%M:%S %z")
 
         {
-          date_ymd: match_data.nil? ? "" : match_data[0],
+          date_ymd: date_ymd,
+          date_822: date_822,
           href: Foresite.relative_path(html_path),
           title: title
         }
@@ -119,8 +123,11 @@ module Foresite
       # Generate index file.
       index_html_path = Foresite.get_path_to_index_file
       File.write(index_html_path, Foresite.render_wrapped_index(links))
-
       $stdout.puts("Created #{Foresite.relative_path(index_html_path)}")
+
+      feed_xml_path = Foresite.get_path_to_feed_file
+      File.write(feed_xml_path, Foresite.render_feed(links, links.last[:date_822]))
+      $stdout.puts("Created #{Foresite.relative_path(feed_xml_path)}")
     end
 
     desc "watch", "Watches markdown and templates files and runs `build` when they change"

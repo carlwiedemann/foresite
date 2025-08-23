@@ -17,6 +17,7 @@ module Foresite
   FILENAME_POST_MD = "post.md.erb"
   FILENAME_WRAPPER_HTML = "wrapper.html.erb"
   FILENAME_LIST_HTML = "_list.html.erb"
+  FILENAME_FEED_XML = "feed.xml.erb"
 
   ENV_ROOT = "FORESITE_ROOT"
 
@@ -68,6 +69,10 @@ module Foresite
     File.join(get_path_to_root, "index.html")
   end
 
+  def self.get_path_to_feed_file
+    File.join(get_path_to_root, "feed.xml")
+  end
+
   def self.relative_path(full_path)
     full_path.gsub(get_path_to_root, "").gsub(Regexp.new("^#{File::SEPARATOR}"), "")
   end
@@ -98,6 +103,13 @@ module Foresite
     })
   end
 
+  def self.render_feed(items, date_build_822)
+    render_erb_file(FILENAME_FEED_XML, {
+      items: items.reverse,
+      date_build_822: date_build_822
+    })
+  end
+
   def self.touch_directories
     [get_path_to_md, get_path_to_out, get_path_to_erb].map do |path|
       if Dir.exist?(path)
@@ -110,7 +122,7 @@ module Foresite
   end
 
   def self.copy_templates
-    [FILENAME_POST_MD, FILENAME_WRAPPER_HTML, FILENAME_LIST_HTML].map do |filename|
+    [FILENAME_POST_MD, FILENAME_WRAPPER_HTML, FILENAME_LIST_HTML, FILENAME_FEED_XML].map do |filename|
       full_file_path = File.join(get_path_to_erb, filename)
       if File.exist?(full_file_path)
         "#{relative_path(full_file_path)} already exists"

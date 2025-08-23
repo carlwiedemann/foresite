@@ -41,6 +41,7 @@ Create a project directory for your site and run `foresite init` from within it:
     Created erb/post.md.erb
     Created erb/wrapper.html.erb
     Created erb/_list.html.erb
+    Created erb/feed.xml.erb
 
 Three subdirectories are created, along with three [ERB](https://docs.ruby-lang.org/en/3.2/ERB.html) template files.
 
@@ -52,6 +53,7 @@ Some facts:
   * `post.md.erb` is the default markdown file for every post.
   * `wrapper.html.erb` is a HTML wrapper template for every generated HTML file.
   * `_list.html.erb` is a HTML template partial for the list of posts on the `index.html` page.
+  * `feed.xml.erb` is a XML template for an RSS feed.
 
 ### 2. Write your first post
 
@@ -69,8 +71,8 @@ A single markdown file is created in the `md` subdirectory. **This file is meant
 
 Some facts:
 
-* The title is the first line formatted as H1 (mandatory).
-* Current date in YYYY-MM-DD format is the first markdown paragraph (optional).
+* The title is the first line formatted as H1.
+* Current date in YYYY-MM-DD format is the first markdown paragraph.
 * Current date and title are "slugified" for filename.
 
 ### 3. Modify templates as desired
@@ -81,6 +83,8 @@ Some facts:
 
 `_list.html.erb` is used to generate the `<ul>` list of posts on the `index.html` file. Modify to show posts in a different way.
 
+`feed.xml.erb` is an RSS feed, it will require a `title` as well as a `base_url` for where you host your site.
+
 ### 4. Generate HTML from markdown
 
 Run `foresite build` to create HTML in the `post` subdirectory and the `index.html` file:
@@ -88,8 +92,9 @@ Run `foresite build` to create HTML in the `post` subdirectory and the `index.ht
     $ foresite build
     Created post/2023-01-15-welcome-to-my-site.html
     Created index.html
+    Created feed.xml
 
-In this example, two HTML files are created.
+In this example, two HTML files and an XML file are created.
 
 Some facts:
 
@@ -97,7 +102,8 @@ Some facts:
 * A single `index.html` file shows a list of links to all posts in reverse-chronological order, prefixed with post date.
   * Post titles are parsed from the first H1 tag in each post markdown file.
   * Post dates are parsed from the post markdown filename.
-* Re-running `foresite build` removes and recreates all HTML files in the `post` subdirectory as well as the `index.html` file.
+* The `feed.xml` file reflects the list posts in RSS 2.0 format.
+* Re-running `foresite build` removes and recreates all HTML files in the `post` subdirectory as well as the `index.html` file and `feed.xml` file.
 
 In this example, the `index.html` will contain:
 

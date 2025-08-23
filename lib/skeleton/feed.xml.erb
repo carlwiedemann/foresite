@@ -1,0 +1,23 @@
+<%
+  title = 'Another Foresite Blog'
+  base_url = 'https://example.com'
+-%>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title><%= title %></title>
+    <link><%= base_url %>/feed.xml</link>
+    <language>en-us</language>
+    <pubDate><%= @date_build_822 %></pubDate>
+    <lastBuildDate><%= @date_build_822 %></lastBuildDate>
+    <generator>Foresite</generator>
+    <atom:link href="<%= base_url %>/feed.xml" rel="self" type="application/rss+xml"/>
+    <% @items.each do |item| -%>
+<item>
+  <title><%= item[:title] %></title>
+  <link><%= "#{base_url}/#{item[:href]}" %></link>
+  <guid><%= "#{base_url}/#{item[:href]}" %></guid>
+  <pubDate><%= item[:date_822] %></pubDate>
+</item>
+    <%- end %>
+  </channel>
+</rss>
